@@ -24,6 +24,7 @@
 
 - **Point.hpp**
     > 点位置
+    包装了 **std::pair<Ty, Ty>**
 - **RGB.hpp**
     > 像素rgb
 
