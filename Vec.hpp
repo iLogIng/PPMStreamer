@@ -70,14 +70,14 @@ public:
     // copy constructor
     Vector(const Vector& other)
     {
-        std::copy(data_.begin(), data_.end(), other.data_.begin());
+        std::copy(other.data_.begin(), other.data_.end(), data_.begin());
     }
 
     Vector& operator =(const Vector& other)
     {
         if(&other != this)
         {
-            std::copy(data_.begin(), data_.end(), other.data_.begin());
+            std::copy(other.data_.begin(), other.data_.end(), data_.begin());
         }
         return *this;
     }
@@ -423,7 +423,7 @@ dot(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
 
 // outer
 template<typename data_type, size_t N>
-Vector<data_type, N>
+ppm::Matrix<data_type, N>
 outer(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
 {
     Matrix<data_type, N> result;
