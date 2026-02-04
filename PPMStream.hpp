@@ -157,7 +157,7 @@ private:
         
         header_size_ = ofs_.tellp();
     }
-    
+
     // open ppm file of ofs_
     inline void raw_open(const std::string& filename, ppm::OpenMode mode = ppm::OpenMode::Rewrite)
     {

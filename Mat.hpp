@@ -11,7 +11,7 @@ namespace ppm
 {
 
 /**
- * + - * / dot cross(vec)
+ * + - * dot cross
  * common & matrix
  * vector & matrix
  * matrix & matrix
@@ -117,12 +117,6 @@ public:
     // operator *
     Matrix<data_type, N>
     operator *(const data_type& a) const;
-    // operator /
-    Matrix<data_type, N>
-    operator /(const Matrix& other) const;
-    // operator /
-    Matrix<data_type, N>
-    operator /(const data_type& a) const;
 
     template<typename Ty, size_t M>
     friend Matrix<Ty, M> operator +(const Ty& a, const Matrix<Ty, M>& mat);
@@ -130,8 +124,6 @@ public:
     friend Matrix<Ty, M> operator -(const Ty& a, const Matrix<Ty, M>& mat);
     template<typename Ty, size_t M>
     friend Matrix<Ty, M> operator *(const Ty& a, const Matrix<Ty, M>& mat);
-    template<typename Ty, size_t M>
-    friend Matrix<Ty, M> operator /(const Ty& a, const Matrix<Ty, M>& mat);
     
     // operator +=
     Matrix<data_type, N>&
@@ -151,12 +143,6 @@ public:
     // operator *=
     Matrix<data_type, N>&
     operator *=(const data_type& a);
-    // operator /=
-    Matrix<data_type, N>&
-    operator /=(const Matrix& other);
-    // operator /=
-    Matrix<data_type, N>&
-    operator /=(const data_type& a);
 
     template<typename Ty, size_t M>
     friend Matrix<Ty, M>& operator +=(const Ty& a, Matrix<Ty, M>& mat);
@@ -164,8 +150,6 @@ public:
     friend Matrix<Ty, M>& operator -=(const Ty& a, Matrix<Ty, M>& mat);
     template<typename Ty, size_t M>
     friend Matrix<Ty, M>& operator *=(const Ty& a, Matrix<Ty, M>& mat);
-    template<typename Ty, size_t M>
-    friend Matrix<Ty, M>& operator /=(const Ty& a, Matrix<Ty, M>& mat);
 
 public:
 
@@ -287,35 +271,6 @@ Matrix<data_type, N>::operator *(const data_type& a) const
     return result;
 }
 
-template<typename data_type, size_t N>
-Matrix<data_type, N>
-Matrix<data_type, N>::operator /(const Matrix<data_type, N>& other) const 
-{
-    Matrix<data_type, N> result;
-    for(size_t i = 0; i < N; ++i)
-    {
-        for(size_t j = 0; j < N; ++j)
-        {
-            result(i, j) = (*this)(i, j) / other(i, j);
-        }
-    }
-    return result;
-}
-template<typename data_type, size_t N>
-Matrix<data_type, N>
-Matrix<data_type, N>::operator /(const data_type& a) const 
-{
-    Matrix<data_type, N> result;
-    for(size_t i = 0; i < N; ++i)
-    {
-        for(size_t j = 0; j < N; ++j)
-        {
-            result(i, j) = (*this)(i, j) / a;
-        }
-    }
-    return result;
-}
-
 // friend
 template<typename Ty, size_t M>
 Matrix<Ty, M> operator +(const Ty& a, const Matrix<Ty, M>& mat)
@@ -352,19 +307,6 @@ Matrix<Ty, M> operator *(const Ty& a, const Matrix<Ty, M>& mat)
         for(size_t j = 0; j < M; ++j)
         {
             result(i, j) = a * mat(i, j);
-        }
-    }
-    return result;
-}
-template<typename Ty, size_t M>
-Matrix<Ty, M> operator /(const Ty& a, const Matrix<Ty, M>& mat)
-{
-    Matrix<Ty, M> result;
-    for(size_t i = 0; i < M; ++i)
-    {
-        for(size_t j = 0; j < M; ++j)
-        {
-            result(i, j) = a / mat(i, j);
         }
     }
     return result;
@@ -447,33 +389,6 @@ Matrix<data_type, N>::operator *=(const data_type& a)
     return *this;
 }
 
-template<typename data_type, size_t N>
-Matrix<data_type, N>&
-Matrix<data_type, N>::operator /=(const Matrix<data_type, N>& other)
-{
-    for(size_t i = 0; i < N; ++i)
-    {
-        for(size_t j = 0; j < N; ++j)
-        {
-            (*this)(i, j) /= other(i, j);
-        }
-    }
-    return *this;
-}
-template<typename data_type, size_t N>
-Matrix<data_type, N>&
-Matrix<data_type, N>::operator /=(const data_type& a)
-{
-    for(size_t i = 0; i < N; ++i)
-    {
-        for(size_t j = 0; j < N; ++j)
-        {
-            (*this)(i, j) /= a;
-        }
-    }
-    return *this;
-}
-
 // friend
 template<typename Ty, size_t M>
 Matrix<Ty, M>& operator +=(const Ty& a, Matrix<Ty, M>& mat)
@@ -507,18 +422,6 @@ Matrix<Ty, M>& operator *=(const Ty& a, Matrix<Ty, M>& mat)
         for(size_t j = 0; j < M; ++j)
         {
             mat(i, j) = a * mat(i, j);
-        }
-    }
-    return mat;
-}
-template<typename Ty, size_t M>
-Matrix<Ty, M>& operator /=(const Ty& a, Matrix<Ty, M>& mat)
-{
-    for(size_t i = 0; i < M; ++i)
-    {
-        for(size_t j = 0; j < M; ++j)
-        {
-            mat(i, j) = a / mat(i, j);
         }
     }
     return mat;

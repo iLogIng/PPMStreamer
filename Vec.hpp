@@ -230,15 +230,6 @@ public:
         return result;
     }
     // /
-    Vector operator /(const Vector& other) const
-    {
-        Vector result;
-        for(size_t i = 0; i < N; ++i)
-        {
-            result[i] = data_[i] / other[i];
-        }
-        return result;
-    }
     Vector operator /(const data_type& value) const
     {
         Vector result;
@@ -255,8 +246,6 @@ public:
     friend Vector<Ty, M> operator -(const Ty value, const Vector<Ty, M>& vec);
     template<typename Ty, size_t M>
     friend Vector<Ty, M> operator *(const Ty value, const Vector<Ty, M>& vec);
-    template<typename Ty, size_t M>
-    friend Vector<Ty, M> operator /(const Ty value, const Vector<Ty, M>& vec);
 
 
     // +=
@@ -311,14 +300,6 @@ public:
         return *this;
     }
     // /=
-    Vector& operator /=(const Vector& other)
-    {
-        for(size_t i = 0; i < N; ++i)
-        {
-            data_[i] /= other[i];
-        }
-        return *this;
-    }
     Vector& operator /=(const data_type& value)
     {
         for(size_t i = 0; i < N; ++i)
@@ -334,8 +315,6 @@ public:
     friend Vector<Ty, N>& operator -=(const Ty value, Vector<Ty, M>& vec);
     template<typename Ty, size_t M>
     friend Vector<Ty, N>& operator *=(const Ty value, Vector<Ty, M>& vec);
-    template<typename Ty, size_t M>
-    friend Vector<Ty, N>& operator /=(const Ty value, Vector<Ty, M>& vec);
 
 public:
 
@@ -396,16 +375,6 @@ Vector<Ty, M> operator *(const Ty value, const Vector<Ty, M>& vec)
     }
     return result;
 }
-template<typename Ty, size_t M>
-Vector<Ty, M> operator /(const Ty value, const Vector<Ty, M>& vec)
-{
-    Vector<Ty, M> result;
-    for(size_t i = 0; i < M; ++i)
-    {
-        result[i] = value / vec[i];
-    }
-    return result;
-}
 
 // friend
 template<typename Ty, size_t M>
@@ -432,15 +401,6 @@ Vector<Ty, M>& operator *=(const Ty value, Vector<Ty, M>& vec)
     for(size_t i = 0; i < M; ++i)
     {
         vec[i] = value * vec[i];
-    }
-    return vec;
-}
-template<typename Ty, size_t M>
-Vector<Ty, M>& operator /=(const Ty value, Vector<Ty, M>& vec)
-{
-    for(size_t i = 0; i < M; ++i)
-    {
-        vec[i] = value / vec[i];
     }
     return vec;
 }
