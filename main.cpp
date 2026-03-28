@@ -3,9 +3,10 @@
 #include <chrono>
 #include <thread>
 
-#include "PPMStream.hpp"
-#include "Vec.hpp"
-#include "Mat.hpp"
+#include "./"
+#include "./include/stream/PPMStream.hpp"
+#include "./include/math/Vec.hpp"
+#include "./include/math/Mat.hpp"
 
 void test1();
 
@@ -77,7 +78,7 @@ void test2()
 
     size_t shade_duration = 0ULL;
 
-    std::string ppm_path_format = "./output-frames/output-%03d.ppm";
+    std::string ppm_path_format = "./outputs/output-frames/output-%03d.ppm";
 
     PPMStream ppms;
 
@@ -240,7 +241,8 @@ void multi_thread_test2()
     const size_t total_frame = fps * sec;   // total frames
 
     // storage path
-    const std::string ppm_path_format = "./output-frames/output-%03d.ppm";
+    const std::string ppm_path_format = "./outputs/output-frames/output-%03d.ppm";
+    const std::string mp4_path_format = "./outputs/output-mp4/output.mp4";
 
     size_t Nthrd = 6;   // N threads
     const size_t piece = total_frame / Nthrd;  // every piece of thread
@@ -278,7 +280,7 @@ void multi_thread_test2()
     std::cout << std::endl;
 
     // use the ffmpeg to create the mp4
-    int statue = system(("ffmpeg -i " + ppm_path_format + " -r " + std::to_string(fps) + " ./output-mp4/output.mp4").data());
+    int statue = system(("ffmpeg -i " + ppm_path_format + " -r " + std::to_string(fps).append(" ") + mp4_path_format).data());
 }
 
 void test3()
@@ -365,7 +367,7 @@ void test4()
 {
     using namespace ppm;
 
-    std::string output_path = "output-picture/drawer-test.ppm";
+    std::string output_path = "outputs/output-picture/drawer-test.ppm";
     const int scale = 60;
     const int w = 16;
     const int h = 9;

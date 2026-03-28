@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RGB.hpp"
-#include "Point.hpp"
+#include "../utils/RGB.hpp"
+#include "../utils/Point.hpp"
 
 #include <utility>
 #include <stdexcept>
