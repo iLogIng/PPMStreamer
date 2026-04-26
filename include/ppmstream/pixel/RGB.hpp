@@ -4,15 +4,13 @@
 #include <cmath>
 #include <stdexcept>
 
-namespace ppm
+namespace ppmstream
 {
 
 struct RGB
 {
     using rgb_type = uint8_t;
     using color_type = uint32_t;
-
-// =============================================================
 
     rgb_type r, g, b;    // red green blue channels
 

@@ -3,7 +3,7 @@
 #include <utility>
 #include <stdexcept>
 
-namespace ppm
+namespace ppmstream
 {
 
 template<typename Ty>
@@ -35,7 +35,7 @@ struct Point
 
     template<typename U>
     Point(const Point<U>& other)
-        : x(static_cast<Ty>(x)), y(static_cast<Ty>(y))
+        : x(static_cast<Ty>(other.x)), y(static_cast<Ty>(other.y))
     {}
 
     Point& operator =(const Point<Ty>& other)

@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <initializer_list>
 
-namespace ppm
+namespace ppmstream
 {
 
 /**
@@ -35,7 +35,7 @@ public:
         data_.fill(value);
     }
 
-    Matrix(std::initializer_list<float> init_list)
+    Matrix(std::initializer_list<data_type> init_list)
     {
         if(init_list.size() > N * N)
         {
@@ -43,7 +43,7 @@ public:
         }
 
         std::copy(init_list.begin(), init_list.end(), this->data_.begin());
-        std::fill(data_.begin() + init_list.size(), data_.end(), 0.0f);
+        std::fill(data_.begin() + init_list.size(), data_.end(), data_type{0});
     }
 
     // copy constructor
@@ -56,7 +56,7 @@ public:
     {
         if(&other != this)
         {
-            std::copy(data_.begin(), data_.end(), other.data_.begin());
+            std::copy(other.data_.begin(), other.data_.end(), data_.begin());
         }
         return *this;
     }
@@ -78,7 +78,7 @@ public:
 
 public:
     // matrix
-    float& operator ()(size_t row, size_t col)
+    data_type& operator ()(size_t row, size_t col)
     {
         if(row >= N || col >= N)
         {
@@ -87,7 +87,7 @@ public:
         return data_[row * N + col];
     }
 
-    const float& operator ()(size_t row, size_t col) const
+    const data_type& operator ()(size_t row, size_t col) const
     {
         if(row >= N || col >= N)
         {
@@ -164,8 +164,8 @@ public:
         return mat;
     }
 
-    // transpos
-    Matrix transpos()
+    // transpose
+    Matrix transpose() const
     {
         Matrix mat;
         for(size_t i = 0; i < N; ++i)
@@ -426,8 +426,6 @@ Matrix<Ty, M>& operator *=(const Ty& a, Matrix<Ty, M>& mat)
     }
     return mat;
 }
-
-// ===================================================
 
 using mat2f = Matrix<float, 2>;
 using mat2 = mat2f;

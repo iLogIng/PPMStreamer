@@ -1,20 +1,14 @@
 #pragma once
 
-#include "Mat.hpp"
-
 #include <cmath>
 #include <array>
 #include <stdexcept>
 #include <initializer_list>
 
-namespace ppm
+#include "Mat.hpp"
+
+namespace ppmstream
 {
-using std::abs;
-using std::min, std::max;
-using std::sin, std::sinf, std::sinh, std::sinhf, std::sinhl, std::sinl;
-using std::cos, std::cosf, std::cosh, std::coshf, std::coshl, std::cosl;
-using std::tan, std::tanf, std::tanh, std::tanhf, std::tanhl, std::tanl;
-using std::exp, std::expf, std::expl;
 
 template<typename Type, size_t n>
 class Vector;
@@ -49,7 +43,7 @@ public:
 
     template<typename... Args, typename  = std::enable_if_t<sizeof...(Args) == N>>
     Vector(Args&&... args)
-        : data_({std::forward<const data_type>(args)...}) {}
+        : data_{static_cast<data_type>(std::forward<Args>(args))...} {}
 
     template<typename OtherType, size_t OtherN>
     Vector(const Vector<OtherType, OtherN>& other, data_type fillvalue = data_type{})
@@ -159,13 +153,13 @@ public:
     }
 
     template<size_t M = N>
-    std::enable_if_t<M >=2, vec2> yx() const
+    std::enable_if_t<M >= 2, Vector<data_type, 2>> yx() const
     {
         return vec2(this->y(), this->x());
     }
 
     template<size_t M = N>
-    std::enable_if_t<M >=2, vec4> xyyx() const
+    std::enable_if_t<M >= 2, Vector<data_type, 4>> xyyx() const
     {
         return vec4(this->x(), this->y(), this->y(), this->x());
     }
@@ -329,25 +323,25 @@ public:
     }
 
     template<typename Ty, size_t M>
-    friend Vector<Ty, N>& operator +=(const Ty value, Vector<Ty, M>& vec);
+    friend Vector<Ty, M>& operator +=(const Ty value, Vector<Ty, M>& vec);
     template<typename Ty, size_t M>
-    friend Vector<Ty, N>& operator -=(const Ty value, Vector<Ty, M>& vec);
+    friend Vector<Ty, M>& operator -=(const Ty value, Vector<Ty, M>& vec);
     template<typename Ty, size_t M>
-    friend Vector<Ty, N>& operator *=(const Ty value, Vector<Ty, M>& vec);
+    friend Vector<Ty, M>& operator *=(const Ty value, Vector<Ty, M>& vec);
     template<typename Ty, size_t M>
-    friend Vector<Ty, N>& operator /=(const Ty value, Vector<Ty, M>& vec);
+    friend Vector<Ty, M>& operator /=(const Ty value, Vector<Ty, M>& vec);
 
 public:
 
     // vector length
-    float length() const
+    auto length() const -> decltype(std::sqrt(static_cast<data_type>(data_type{})))
     {
         data_type sum = {};
         for(size_t i = 0; i < N; ++i)
         {
             sum += data_[i] * data_[i];
         }
-        return std::sqrt(static_cast<float>(sum));
+        return std::sqrt(sum);
     }
 
     // normalize
@@ -463,7 +457,7 @@ dot(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
 
 // outer
 template<typename data_type, size_t N>
-ppm::Matrix<data_type, N>
+ppmstream::Matrix<data_type, N>
 outer(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
 {
     Matrix<data_type, N> result;
@@ -506,7 +500,7 @@ Vector<data_type, N> cross(const Vector<data_type, N>& a, const Vector<data_type
 
 // length squared
 template<typename data_type, size_t N>
-float
+data_type
 length_squared(const Vector<data_type,N>& vec)
 {
     data_type sum = {0};
@@ -514,13 +508,13 @@ length_squared(const Vector<data_type,N>& vec)
     {
         sum += vec[i] * vec[i];
     }
-    return static_cast<float>(sum);
+    return sum;
 }
 
 // length
 template<typename data_type, size_t N>
-float
-length(const Vector<data_type, N>& vec)
+auto
+length(const Vector<data_type, N>& vec) -> decltype(std::sqrt(data_type{}))
 {
     return std::sqrt(length_squared(vec));
 }
@@ -530,8 +524,8 @@ template<typename data_type, size_t N>
 Vector<data_type, N>
 normalize(const Vector<data_type, N>& vec)
 {
-    float veclength = length(vec);
-    if(veclength > 0.0f)
+    auto veclength = length(vec);
+    if(veclength > data_type{0})
     {
         return vec / veclength;
     }

@@ -1,30 +1,67 @@
+CXX      := g++
+CXXFLAGS := -Wall -Wextra -g -std=c++17
+AR       := ar
+ARFLAGS  := rcs
 
-CXX = g++
-CXX_FLAGES = -Wall -g
+# Project directories
+SRC_DIR      := src
+INCLUDE_DIR  := include
+LIB_DIR      := lib
 
-SRC_PATH = ./src
+# Include flags
+INCLUDES := -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/ppmstream
 
-INCLUDE_PATH = include
-INCLUDE_SUBDIRS = math stream utils
+# Library source files (templates like Vec.hpp, Mat.hpp, Point.hpp are header-only)
+LIB_SRCS := $(SRC_DIR)/stream/PPMBuffer.cpp \
+            $(SRC_DIR)/stream/PPMDrawer.cpp \
+            $(SRC_DIR)/stream/PPMStream.cpp
 
-INCLUDES = -I$(INCLUDE_PATH) $(addprefix -I$(INCLUDE_PATH)/, $(INCLUDE_SUBDIRS))
+# Library object files
+LIB_OBJS := $(LIB_SRCS:.cpp=.o)
 
-HEADERS = $(wildcard $(INCLUDE_PATH)/*/*.hpp)
+# Auto-generated dependency files
+DEPS := $(LIB_OBJS:.o=.d)
 
-SOURCE = main.cpp
+# Library output
+LIB_TARGET := $(LIB_DIR)/libppmstream.a
 
-TARGET = main
-
-# = = = = = =
-
-outprint:
-	@echo $(INCLUDES)
-
-$(TARGET): $(SOURCE) $(HEADERS)
-	$(CXX) $(CXX_FLAGES) $(INCLUDES) $< -o $@
+# =======================================
 
 .PHONY:
+	all
+	library
 	clean
+	clean-outputs
+	clean-output-frames
+	clean-output-video
+
+all: library
+
+library: $(LIB_TARGET)
+
+$(LIB_TARGET): $(LIB_OBJS) | $(LIB_DIR)
+	$(AR) $(ARFLAGS) $@ $^
+
+$(SRC_DIR)/stream/%.o: $(SRC_DIR)/stream/%.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -MMD -MP -c $< -o $@
+
+$(LIB_DIR):
+	mkdir -p $@
+
+# Include auto-generated dependency files
+-include $(DEPS)
 
 clean:
-	rm $(TARGET)
+	rm -rf $(LIB_DIR)
+	rm -f $(SRC_DIR)/stream/*.o $(SRC_DIR)/stream/*.d
+
+OUTPUTS = ./outputs
+
+clean-outputs: clean-output-frames clean-output-video
+
+clean-output-frames:
+	rm $(OUTPUTS)/output-frames/*
+
+clean-output-video:
+	rm $(OUTPUTS)/output-video/*
+
