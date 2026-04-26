@@ -12,61 +12,30 @@
 #include <vector>
 
 
-// set ppm head info filed
+// write to init the ppm head info
 void
 ppmstream::PPMStream::
-set_ppm_dimension(const size_t& width, const size_t& height, int colors)
+init_ppm_header(size_t w, size_t h, int c)
 {
-    colors_ = colors;
-    pixels_.reset(width, height, ppmstream::RGB::black());
+    ppmfs_ << "P6\n";
+    ppmfs_ << w << ' ' << h << '\n';
+    ppmfs_ << c << '\n';
+    ppmfs_.flush();
+
+    header_size_ = ppmfs_.tellp();
 }
 
-// ppm IO stream flush
-ppmstream::PPMStream&
+// open ppm file with exception check
+void
 ppmstream::PPMStream::
-flush()
+open_file(const std::string& filename, ppmstream::OpenMode mode)
 {
-    if(!pixels_.empty() && ofs_.is_open())
+    if(ppmfs_.is_open())
     {
-        ofs_.seekp(header_size_);
-        ofs_.write(reinterpret_cast<const char*>(pixels_.data()), pixels_.bytes());
-        ofs_.flush();
+        ppmfs_.close();
     }
-    return *this;
-}
-
-// write to init the ppm head info
-inline void
-ppmstream::PPMStream::
-init_ppm_file_head(const size_t& w, const size_t& h, const int &c)
-{
-    ofs_ << "P6\n";
-    ofs_ << w << ' ' << h << '\n';
-    ofs_ << c << '\n';
-    ofs_.flush();
-    
-    header_size_ = ofs_.tellp();
-}
-
-// open ppm file of ofs_
-inline void
-ppmstream::PPMStream::
-raw_open(const std::string& filename, ppmstream::OpenMode mode)
-{
-    ofs_.open(filename, static_cast<std::ios::openmode>(mode));
-}
-
-// open ppm file of ofs_ with exception check
-inline void
-ppmstream::PPMStream::
-exception_open(const std::string& filename, ppmstream::OpenMode mode)
-{
-    if(ofs_.is_open())
-    {
-        ofs_.close();
-    }
-    this->raw_open(filename, mode);
-    if(!ofs_.is_open())
+    ppmfs_.open(filename, static_cast<std::ios::openmode>(mode));
+    if(!ppmfs_.is_open())
     {
         throw std::runtime_error("CANNOT OPEN THE PPM FILE: " + filename);
     }
@@ -78,19 +47,24 @@ PPMStream()
 {}
 
 ppmstream::PPMStream::
-PPMStream(std::string filename, size_t width, size_t height, int colors, RGB bk_color, OpenMode mode)
-    : pixels_(width, height, bk_color), colors_(colors)
+PPMStream(std::string filename,
+    size_t width, size_t height,
+    int color_depth, RGB bk_color,
+    OpenMode mode)
+    : pixels_(width, height, bk_color), color_depth_(color_depth)
 {
-    this->raw_open(filename, mode);
-    init_ppm_file_head(width, height, colors);
+    open_file(filename, mode);
+    init_ppm_header(width, height, color_depth);
 }
 
 ppmstream::PPMStream::
-PPMStream(std::string filename, size_t scale, size_t w, size_t h, int colors, RGB bk_color, OpenMode mode)
-    : PPMStream(filename, w * scale, h * scale, colors, bk_color, mode)
+PPMStream(std::string filename,
+    size_t scale, size_t w, size_t h,
+    int color_depth, RGB bk_color,
+    OpenMode mode)
+    : PPMStream(filename, w * scale, h * scale, color_depth, bk_color, mode)
 { }
 
-// destructor
 ppmstream::PPMStream::
 ~PPMStream()
 {
@@ -107,11 +81,14 @@ buffer()
 // normal open ppm file
 ppmstream::PPMStream&
 ppmstream::PPMStream::
-open(std::string filename, size_t width, size_t height, int colors, RGB bk_color, ppmstream::OpenMode mode)
+open(std::string filename,
+    size_t width, size_t height,
+    int color_depth, RGB bk_color,
+    ppmstream::OpenMode mode)
 {
-    set_ppm_dimension(width, height, colors);
-    this->exception_open(filename, mode);
-    init_ppm_file_head(width, height, colors);
+    color_depth_ = color_depth;
+    open_file(filename, mode);
+    init_ppm_header(width, height, color_depth);
 
     pixels_.reset(width, height, bk_color);
     return *this;
@@ -120,24 +97,27 @@ open(std::string filename, size_t width, size_t height, int colors, RGB bk_color
 // normal scale open ppm file
 ppmstream::PPMStream&
 ppmstream::PPMStream::
-open(std::string filename, size_t scale, size_t w, size_t h, int colors, RGB bk_color, ppmstream::OpenMode mode)
+open(std::string filename,
+    size_t scale, size_t w, size_t h,
+    int color_depth, RGB bk_color,
+    ppmstream::OpenMode mode)
 {
-    return open(filename, w * scale, h * scale, colors, bk_color, mode);
+    return open(filename, w * scale, h * scale, color_depth, bk_color, mode);
 }
 
 // close the ppm file stream
-inline void
+void
 ppmstream::PPMStream::
 close()
 {
-    if(ofs_.is_open())
+    if(ppmfs_.is_open())
     {
         if(!pixels_.empty())
         {
-            ofs_.seekp(header_size_);
-            ofs_.write(reinterpret_cast<const char*>(pixels_.data()), pixels_.bytes());
+            ppmfs_.seekp(header_size_);
+            ppmfs_.write(reinterpret_cast<const char*>(pixels_.data()), pixels_.bytes());
         }
-        ofs_.close();
+        ppmfs_.close();
     }
 }
 
@@ -146,7 +126,7 @@ bool
 ppmstream::PPMStream::
 is_open() const
 {
-    return ofs_.is_open();
+    return ppmfs_.is_open();
 }
 
 // if file at end of file
@@ -154,7 +134,7 @@ bool
 ppmstream::PPMStream::
 eof() const
 {
-    return ofs_.eof();
+    return ppmfs_.eof();
 }
 
 void
@@ -175,7 +155,7 @@ verify_ppm_file(std::string filename, size_t expected_width, size_t expected_hei
     std::string header;
     std::getline(file, header);     // P6
     std::getline(file, header);     // width height
-    std::getline(file, header);     // colors
+    std::getline(file, header);     // color_depth
 
     std::streampos header_end = file.tellg();
     std::streamsize pixel_data_size = file_size - header_end;
