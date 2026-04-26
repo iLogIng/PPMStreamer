@@ -196,45 +196,6 @@ operator [](size_t n) const
     return pixels_[n];
 }
 
-// fill row
-void
-ppmstream::PPMBuffer::
-fill_row(size_t x, size_t y, size_t n, RGB color)
-{
-    check_bounds(x, y);
-    for(; x < std::min(x + n, width_); ++x)
-    {
-        (*this)(x, y) = color;
-    }
-}
-
-// fill col
-void
-ppmstream::PPMBuffer::
-fill_col(size_t x, size_t y, size_t n, RGB color)
-{
-    check_bounds(x, y);
-    for(; y < std::min(y + n, height_); ++y)
-    {
-        (*this)(x, y) = color;
-    }
-}
-
-// fill rectangle
-void
-ppmstream::PPMBuffer::
-fill_rect(size_t x, size_t y, size_t w, size_t h, RGB color)
-{
-    check_bounds(x, y);
-    for(size_t row = y; row < std::min(x + w, width_); ++row)
-    {
-        for(size_t col = x; col < std::min(y + h, height_); ++col)
-        {
-            (*this)(col, row) = color;
-        }
-    }
-}
-
 // copy from other buffer
 void
 ppmstream::PPMBuffer::
@@ -245,22 +206,6 @@ copy_from(const PPMBuffer& other)
         throw std::invalid_argument("The Buffer must match.");
     }
     pixels_ = other.pixels_;
-}
-
-// set pixel rgb
-void
-ppmstream::PPMBuffer::
-set(size_t x, size_t y, const RGB& value)
-{
-    this->at(x, y) = value;
-}
-
-// redraw buffer by rgb
-void
-ppmstream::PPMBuffer::
-redraw(const RGB color)
-{
-    std::fill(pixels_.begin(), pixels_.begin() + pixels_.size(), color);
 }
 
 // clear all buffer

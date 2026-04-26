@@ -75,12 +75,11 @@ exception_open(const std::string& filename, ppmstream::OpenMode mode)
 // constructor
 ppmstream::PPMStream::
 PPMStream()
-    : drawer_(*this)
 {}
 
 ppmstream::PPMStream::
 PPMStream(std::string filename, size_t width, size_t height, int colors, RGB bk_color, OpenMode mode)
-    : pixels_(width, height, bk_color), colors_(colors), drawer_(*this)
+    : pixels_(width, height, bk_color), colors_(colors)
 {
     this->raw_open(filename, mode);
     init_ppm_file_head(width, height, colors);
@@ -143,18 +142,6 @@ is_open() const
     return ofs_.is_open();
 }
 
-// get pixel position
-std::streampos
-ppmstream::PPMStream::
-get_pixel_position(size_t x, size_t y) const
-{
-    if(x >= pixels_.width() || y >= pixels_.height())
-    {
-        throw std::runtime_error("pixel out of range");
-    }
-    return calculate_pixel_offset(x, y);
-}
-
 // if file at end of file
 bool
 ppmstream::PPMStream::
@@ -163,61 +150,12 @@ eof() const
     return ofs_.eof();
 }
 
-// calculate pixel offset
-std::streamoff
+// expose the internal pixel buffer
+ppmstream::PPMBuffer&
 ppmstream::PPMStream::
-calculate_pixel_offset(size_t x, size_t y) const
+buffer()
 {
-    return static_cast<std::streamoff>((x + y * pixels_.width()) * sizeof(RGB));
-}
-
-// calculate pixel index
-std::streamoff
-ppmstream::PPMStream::
-calculate_pixel_index(size_t index) const
-{
-    return static_cast<std::streamoff>(index * sizeof(RGB));
-}
-
-// write pixel by (x, y)
-ppmstream::PPMStream&
-ppmstream::PPMStream::
-write_pixel(size_t x, size_t y, RGB& rgb)
-{
-    pixels_(x, y) = rgb;
-    return *this;
-}
-
-// write pixel by (x, y)
-ppmstream::PPMStream&
-ppmstream::PPMStream::
-write_pixel(size_t x, size_t y, RGB&& rgb)
-{
-    pixels_(x, y) = rgb;
-    return *this;
-}
-
-// valid position
-bool
-ppmstream::PPMStream::
-is_valid_position(size_t w, size_t h)
-{
-    return w < pixels_.width() && h < pixels_.height();
-}
-
-// total pixels
-std::size_t
-ppmstream::PPMStream::
-total_pixels()
-{
-    return pixels_.size();
-}
-
-ppmstream::PPMDrawer&
-ppmstream::PPMStream::
-get_drawer()
-{
-    return this->drawer_;
+    return pixels_;
 }
 
 

@@ -13,13 +13,11 @@ namespace ppmstream
 class PPMBuffer
 {
 private:
-    // ppm picture buffer
-    std::vector<RGB> pixels_;
-    // width
-    size_t width_ = 0;
-    // height_
-    size_t height_ = 0;
+    std::vector<RGB> pixels_;       // 像素缓冲
+    size_t width_ = 0;              // 宽
+    size_t height_ = 0;             // 高
 
+#pragma region Construction
 public:
     // constructor
     PPMBuffer() = default;
@@ -39,6 +37,7 @@ public:
 
     ~PPMBuffer() = default;
 
+#pragma endregion
 public:
 
     // ppm file width
@@ -88,21 +87,8 @@ public:
     const RGB& operator [](size_t n) const;
 
 public:
-
-    // fill row
-    void fill_row(size_t x, size_t y, size_t n, RGB color);
-    // fill col
-    void fill_col(size_t x, size_t y, size_t n, RGB color);
-    // fill rectangle
-    void fill_rect(size_t x, size_t y, size_t w, size_t h, RGB color);
-
     // copy from other buffer
     void copy_from(const PPMBuffer& other);
-
-    // set pixel rgb
-    void set(size_t x, size_t y, const ppmstream::RGB& value);
-    // redraw buffer by rgb
-    void redraw(const ppmstream::RGB color = ppmstream::RGB::black());
     // clear all buffer
     void clear();
 

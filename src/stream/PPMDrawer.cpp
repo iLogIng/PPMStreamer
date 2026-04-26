@@ -1,10 +1,9 @@
 #include "../../include/ppmstream/stream/PPMDrawer.hpp"
-#include "../../include/ppmstream/stream/PPMStream.hpp"
 
 // constructor
 ppmstream::PPMDrawer::
-PPMDrawer(ppmstream::PPMStream& stream)
-    : stream_(stream)
+PPMDrawer(ppmstream::PPMBuffer& buffer)
+    : buffer_(buffer)
 {}
 
 // redraw the buffer
@@ -12,9 +11,9 @@ void
 ppmstream::PPMDrawer::
 redraw(RGB rgb)
 {
-    for(size_t i = 0; i < stream_.pixels_.width() * stream_.pixels_.height(); ++i)
+    for(size_t i = 0; i < buffer_.size(); ++i)
     {
-        stream_.pixels_[i] = rgb;
+        buffer_[i] = rgb;
     }
 }
 
@@ -23,13 +22,15 @@ void
 ppmstream::PPMDrawer::
 draw_point(PointI point, RGB rgb)
 {
-    if(point.x < stream_.pixels_.width() && point.y < stream_.pixels_.height())
+    if(point.x >= 0 && point.y >= 0
+        && static_cast<size_t>(point.x) < buffer_.width()
+        && static_cast<size_t>(point.y) < buffer_.height())
     {
-        stream_.pixels_(point.x, point.y) = rgb;
+        buffer_(point.x, point.y) = rgb;
     }
 }
 
-// draw a line
+// draw a line (Bresenham)
 void
 ppmstream::PPMDrawer::
 draw_line(PointI p0, PointI p1, RGB color)
@@ -61,10 +62,57 @@ draw_line(PointI p0, PointI p1, RGB color)
     }
 }
 
-// draw rectangle
+// draw rectangle outline
 void
 ppmstream::PPMDrawer::
 draw_rectangle(PointI p0, PointI p2, RGB color)
 {
+    PointI p1(p2.x, p0.y);
+    PointI p3(p0.x, p2.y);
 
+    draw_line(p0, p1, color);
+    draw_line(p1, p2, color);
+    draw_line(p2, p3, color);
+    draw_line(p3, p0, color);
+}
+
+// fill rectangle
+void
+ppmstream::PPMDrawer::
+fill_rectangle(size_t x, size_t y, size_t w, size_t h, RGB color)
+{
+    size_t end_row = std::min(y + h, buffer_.height());
+    size_t end_col = std::min(x + w, buffer_.width());
+
+    for(size_t row = y; row < end_row; ++row)
+    {
+        for(size_t col = x; col < end_col; ++col)
+        {
+            buffer_(col, row) = color;
+        }
+    }
+}
+
+// fill a row segment
+void
+ppmstream::PPMDrawer::
+fill_row(size_t x, size_t y, size_t n, RGB color)
+{
+    size_t end_x = std::min(x + n, buffer_.width());
+    for(; x < end_x; ++x)
+    {
+        buffer_(x, y) = color;
+    }
+}
+
+// fill a column segment
+void
+ppmstream::PPMDrawer::
+fill_col(size_t x, size_t y, size_t n, RGB color)
+{
+    size_t end_y = std::min(y + n, buffer_.height());
+    for(; y < end_y; ++y)
+    {
+        buffer_(x, y) = color;
+    }
 }

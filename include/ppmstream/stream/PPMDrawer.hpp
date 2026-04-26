@@ -2,52 +2,54 @@
 
 #include "../pixel/Point.hpp"
 #include "../pixel/RGB.hpp"
+#include "PPMBuffer.hpp"
 
 namespace ppmstream
 {
 
-class PPMStream;
-
 class PPMDrawer
 {
-    friend class PPMStream;
-    friend class PPMBuffer;
 private:
 
-    // binding the PPMStream
-    PPMStream& stream_;
+    // binding the PPMBuffer
+    PPMBuffer& buffer_;
 
+#pragma region Construction
+public:
     // constructor
-    PPMDrawer(PPMStream& stream);
+    explicit PPMDrawer(PPMBuffer& buffer);
 
-private:
-    // constructor
+    // deleted
     PPMDrawer() = delete;
-
-    // copy constructor
     PPMDrawer(const PPMDrawer&) = delete;
     PPMDrawer& operator =(const PPMDrawer&) = delete;
-
-    // move constructor
     PPMDrawer(PPMDrawer&&) = delete;
     PPMDrawer& operator =(PPMDrawer&&) = delete;
-
-    // destructor
     ~PPMDrawer() = default;
 
+#pragma endregion
 public:
-    // redraw the buffer
+
+    // redraw the whole buffer
     void redraw(RGB rgb);
 
-public:
     // draw pixel by (x, y)
     void draw_point(PointI point, RGB rgb);
 
-    // draw a line
+    // draw a line (Bresenham)
     void draw_line(PointI p0, PointI p1, RGB color);
 
-    // draw rectangle
-    void draw_rectangle(PointI p0, PointI p2, RGB color);
+    // draw rectangle outline
+    void draw_rectangle(PointI p0, PointI p1, RGB color);
+
+    // fill rectangle
+    void fill_rectangle(size_t x, size_t y, size_t w, size_t h, RGB color);
+
+    // fill a row segment
+    void fill_row(size_t x, size_t y, size_t n, RGB color);
+
+    // fill a column segment
+    void fill_col(size_t x, size_t y, size_t n, RGB color);
 
 };
 
