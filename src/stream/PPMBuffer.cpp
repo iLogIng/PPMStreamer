@@ -8,18 +8,6 @@ PPMBuffer(size_t width, size_t height, RGB bk_color)
     std::fill(pixels_.begin(), pixels_.end(), bk_color);
 }
 
-ppmstream::PPMBuffer::
-PPMBuffer(size_t width, size_t height, const std::vector<RGB>& data)
-{
-    if(data.size() != width * height)
-    {
-        throw std::invalid_argument("DATA SIZE CANNOT MATCH WIDTH * HEIGHT");
-    }
-    width_ = width;
-    height_ = height;
-    pixels_ = std::move(data);
-}
-
 // move constructor
 ppmstream::PPMBuffer::
 PPMBuffer(PPMBuffer&& other)
@@ -113,29 +101,6 @@ reset(size_t width, size_t height, ppmstream::RGB color)
     pixels_.resize(width * height, color);
 }
 
-// (x, y) is valid position
-bool
-ppmstream::PPMBuffer::
-is_valid_position(size_t x, size_t y) const
-{
-    return x < width_ && y < height_;
-}
-
-// (x, y) to index of pixels buffer
-std::size_t
-ppmstream::PPMBuffer::
-to_index(std::size_t x, std::size_t y) const
-{
-    return x + y * width_;
-}
-// index of pixels buffer to (x, y)
-std::pair<std::size_t, std::size_t>
-ppmstream::PPMBuffer::
-to_position(size_t index) const
-{
-    return {index % width_, index / width_};
-}
-
 // check bounds
 void
 ppmstream::PPMBuffer::
@@ -194,18 +159,6 @@ ppmstream::PPMBuffer::
 operator [](size_t n) const
 {
     return pixels_[n];
-}
-
-// copy from other buffer
-void
-ppmstream::PPMBuffer::
-copy_from(const PPMBuffer& other)
-{
-    if(width_ != other.width_ || height_ != other.height_)
-    {
-        throw std::invalid_argument("The Buffer must match.");
-    }
-    pixels_ = other.pixels_;
 }
 
 // clear all buffer

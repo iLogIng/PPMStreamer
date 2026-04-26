@@ -62,57 +62,43 @@ draw_line(PointI p0, PointI p1, RGB color)
     }
 }
 
-// draw rectangle outline
-void
-ppmstream::PPMDrawer::
-draw_rectangle(PointI p0, PointI p2, RGB color)
-{
-    PointI p1(p2.x, p0.y);
-    PointI p3(p0.x, p2.y);
-
-    draw_line(p0, p1, color);
-    draw_line(p1, p2, color);
-    draw_line(p2, p3, color);
-    draw_line(p3, p0, color);
-}
-
 // fill rectangle
 void
 ppmstream::PPMDrawer::
-fill_rectangle(size_t x, size_t y, size_t w, size_t h, RGB color)
+fill_rectangle(PointI p, size_t w, size_t h, RGB color)
 {
-    size_t end_row = std::min(y + h, buffer_.height());
-    size_t end_col = std::min(x + w, buffer_.width());
+    size_t end_row = std::min(p.x + h, buffer_.height());
+    size_t end_col = std::min(p.y + w, buffer_.width());
 
-    for(size_t row = y; row < end_row; ++row)
+    for(size_t row = p.y; row < end_row; ++row)
     {
-        for(size_t col = x; col < end_col; ++col)
+        for(size_t col = p.x; col < end_col; ++col)
         {
             buffer_(col, row) = color;
         }
     }
 }
 
-// fill a row segment
+// draw a row segment
 void
 ppmstream::PPMDrawer::
-fill_row(size_t x, size_t y, size_t n, RGB color)
+draw_row(PointI p, size_t n, RGB color)
 {
-    size_t end_x = std::min(x + n, buffer_.width());
-    for(; x < end_x; ++x)
+    size_t end_x = std::min(p.x + n, buffer_.width());
+    for(; p.x < end_x; ++p.x)
     {
-        buffer_(x, y) = color;
+        buffer_(p.x, p.y) = color;
     }
 }
 
-// fill a column segment
+// draw a column segment
 void
 ppmstream::PPMDrawer::
-fill_col(size_t x, size_t y, size_t n, RGB color)
+draw_col(PointI p, size_t n, RGB color)
 {
-    size_t end_y = std::min(y + n, buffer_.height());
-    for(; y < end_y; ++y)
+    size_t end_y = std::min(p.y + n, buffer_.height());
+    for(; p.y < end_y; ++p.y)
     {
-        buffer_(x, y) = color;
+        buffer_(p.x, p.y) = color;
     }
 }

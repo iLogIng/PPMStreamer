@@ -28,8 +28,9 @@ public:
     ~PPMDrawer() = default;
 
 #pragma endregion
-public:
 
+#pragma region Drawing Operation
+public:
     // redraw the whole buffer
     void redraw(RGB rgb);
 
@@ -39,17 +40,16 @@ public:
     // draw a line (Bresenham)
     void draw_line(PointI p0, PointI p1, RGB color);
 
-    // draw rectangle outline
-    void draw_rectangle(PointI p0, PointI p1, RGB color);
+    // draw a row segment
+    void draw_row(PointI p, size_t n, RGB color);
+
+    // draw a column segment
+    void draw_col(PointI p, size_t n, RGB color);
 
     // fill rectangle
-    void fill_rectangle(size_t x, size_t y, size_t w, size_t h, RGB color);
+    void fill_rectangle(PointI p, size_t w, size_t h, RGB color);
 
-    // fill a row segment
-    void fill_row(size_t x, size_t y, size_t n, RGB color);
-
-    // fill a column segment
-    void fill_col(size_t x, size_t y, size_t n, RGB color);
+#pragma endregion
 
 };
 

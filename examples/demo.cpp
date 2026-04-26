@@ -9,17 +9,17 @@
 #include "../include/ppmstream/math/Vec.hpp"
 #include "../include/ppmstream/math/Mat.hpp"
 
-void test1();
+void chess_board();
 
-void test2();
+void shader_test();
 
-void multi_thread_test2();
+void multi_thread_shader_test();
 
-void test3();
+void pure_dark_red();
 
-void test2_simple_pattern();
+void rainbow_picture();
 
-void test4();
+void rhombus();
 
 const std::filesystem::path outputs_dir("../outputs");
 const std::filesystem::path output_frames_dir = outputs_dir / "output-frames";
@@ -27,16 +27,17 @@ const std::filesystem::path output_video_dir = outputs_dir / "output-video";
 
 int main()
 {
-    // multi_thread_test2();
-    test1();
-    // test2();
-
-    // test4();
+    // multi_thread_shader_test();
+    // chess_board();
+    // shader_test();
+    // pure_dark_red();
+    // rainbow_picture();
+    rhombus();
 
     return 0;
 }
 
-void test1()
+void chess_board()
 {
     using namespace ppmstream;
 
@@ -44,9 +45,10 @@ void test1()
     const size_t w = 16;
     const size_t h = 9;
     const int colors = 255;
-    std::string output_file_name = "black-red-chess-board.ppm";
+    std::string output_file_name = "chess-board.ppm";
     std::filesystem::path output_file = output_frames_dir / output_file_name;
     PPMStream ppms(output_file.c_str(), scale, w, h, colors);
+    PPMDrawer drawer(ppms.buffer());
 
     for(int y = 0; y < scale * h; ++y)
     {
@@ -54,11 +56,11 @@ void test1()
         {
             if((y/scale + x/scale) % 2)
             {
-                ppms.buffer()(x, y) = {0xFF, 0x00, 0x00};
+                drawer.draw_point({x, y}, {0xFF, 0x00, 0x00});
             }
             else
             {
-                ppms.buffer()(x, y) = {0x00, 0x00, 0x00};
+                drawer.draw_point({x, y}, {0x00, 0x00, 0x00});
             }
         }
     }
@@ -68,7 +70,7 @@ void test1()
     std::cout << "Generate " << output_file << std::endl;
 }
 
-void test2()
+void shader_test()
 {
     using namespace ppmstream;
 
@@ -154,7 +156,7 @@ void test2()
     int statue = system((std::string("ffmpeg -i ") + ppm_path_format.c_str() + " -r " + std::to_string(fps) + " " + (output_video_dir / "output.mp4").c_str()).data());
 }
 
-void multi_thread_shader_of_test2(size_t fps, size_t start_frame, size_t end_frame, const std::string& ppm_path_format)
+void multi_thread_shader_of_shader_test(size_t fps, size_t start_frame, size_t end_frame, const std::string& ppm_path_format)
 {
     using namespace ppmstream;
 
@@ -241,7 +243,7 @@ void multi_thread_shader_of_test2(size_t fps, size_t start_frame, size_t end_fra
     return;
 }
 
-void multi_thread_test2()
+void multi_thread_shader_test()
 {
     using namespace ppmstream;
 
@@ -267,7 +269,7 @@ void multi_thread_test2()
     for(size_t i = 0; i < Nthrd; ++i)
     {
         thrds.emplace_back(
-            multi_thread_shader_of_test2,
+            multi_thread_shader_of_shader_test,
             fps,
             i * piece, std::min((i + 1) * piece, total_frame),
             ppm_path_format
@@ -294,24 +296,25 @@ void multi_thread_test2()
     int statue = system((std::string("ffmpeg -i ") + ppm_path_format.c_str() + " -r " + std::to_string(fps).append(" ") + mp4_path_format.c_str()).data());
 }
 
-void test3()
+void pure_dark_red()
 {
     using namespace ppmstream;
 
-    std::string ppm_file_name = "test3-pic.ppm";
+    std::string ppm_file_name = "pure_dark_red.ppm";
     std::filesystem::path ppm_output_path = output_frames_dir / ppm_file_name;
     const int scale = 120;
     const int width = 16 * scale;
     const int height = 9 * scale;
     const int colors = 255;
 
-    PPMStream ppms(ppm_file_name.c_str(), width, height, colors);
+    PPMStream ppms(ppm_output_path, width, height, colors);
+    PPMDrawer drawer(ppms.buffer());
 
     for(size_t y = 0; y < height; ++y)
     {
         for(size_t x = 0; x < width; ++x)
         {
-            ppms.buffer()(x, y) = {0xAA, 0x00, 0x00};
+            drawer.draw_point({x, y}, {0xAA, 0x00, 0x00});
         }
     }
 
@@ -321,17 +324,17 @@ void test3()
 
 }
 
-void test2_simple_pattern()
+void rainbow_picture()
 {
     using namespace ppmstream;
     
-    std::string output_file_name = "test2-simple-pattern.ppm";
+    std::string output_file_name = "rainbow_picture.ppm";
     std::filesystem::path ppm_output_path = output_frames_dir / output_file_name;
     const int width = 800;
     const int height = 600;
     const int colors = 255;
     
-    PPMStream ppms(ppm_output_path.c_str(), width, height, colors);
+    PPMStream ppms(ppm_output_path, width, height, colors);
     
     for(int y = 0; y < height; ++y)
     {
@@ -374,11 +377,11 @@ void test2_simple_pattern()
     std::cout << "Generated: " << ppm_output_path << std::endl;
 }
 
-void test4()
+void rhombus()
 {
     using namespace ppmstream;
 
-    std::string ppm_file_name = "drawer-test.ppm";
+    std::string ppm_file_name = "rhombus.ppm";
     std::filesystem::path ppm_output_path = output_frames_dir / ppm_file_name;
     const int scale = 60;
     const int w = 16;
@@ -387,11 +390,8 @@ void test4()
     const int height = h * scale;
     const int colors = 255;
 
-    PPMStream stream(ppm_output_path.c_str(), width, height, colors, RGB(0xAA, 0x00, 0x00));
-
+    PPMStream stream(ppm_output_path, width, height, colors, RGB(0xAA, 0x00, 0x00));
     PPMDrawer drawer(stream.buffer());
-
-// ================================================================
 
     const int N = 100;
     for(int i = 0; i < N; ++i)

@@ -20,11 +20,11 @@ namespace ppmstream
 
 enum class OpenMode
 {
-    // Read ppm file
+    // 读文件
     Read = std::ios::binary | std::ios::in,
-    // Alter ppm file
+    // 更改文件
     Alter = std::ios::binary | std::ios::out | std::ios::ate,
-    // Write ppm file
+    // 写文件
     Write = std::ios::binary | std::ios::out | std::ios::trunc
 };  // enum class OpenMode
 
@@ -55,6 +55,10 @@ private:
     // open ppm file of ofs_ with exception check
     void exception_open(const std::string& filename, ppmstream::OpenMode mode = ppmstream::OpenMode::Write);
 
+public:
+
+    PPMBuffer& buffer();
+
 #pragma region Construction
 public:
     // constructor
@@ -82,11 +86,9 @@ public:
 
     // destructor
     ~PPMStream();
-
-    // access the internal pixel buffer
-    PPMBuffer& buffer();
 #pragma endregion
 
+#pragma region Stream State
 public:
 
     // normal open ppm file
@@ -111,12 +113,12 @@ public:
     // if file at end of file
     bool eof() const;
 
-public:
-
-    // verify ppm file msg
-    void verify_ppm_file(std::string filename, size_t expected_width, size_t expected_height);
+#pragma endregion
 
 };  // class PPMStream
+
+// verify ppm file msg
+void verify_ppm_file(std::string filename, size_t expected_width, size_t expected_height);
 
 }   // namespace ppmstream
 

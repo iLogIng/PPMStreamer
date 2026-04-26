@@ -97,6 +97,13 @@ ppmstream::PPMStream::
     close();
 }
 
+ppmstream::PPMBuffer&
+ppmstream::PPMStream::
+buffer()
+{
+    return this->pixels_;
+}
+
 // normal open ppm file
 ppmstream::PPMStream&
 ppmstream::PPMStream::
@@ -150,17 +157,8 @@ eof() const
     return ofs_.eof();
 }
 
-// expose the internal pixel buffer
-ppmstream::PPMBuffer&
-ppmstream::PPMStream::
-buffer()
-{
-    return pixels_;
-}
-
-
 void
-ppmstream::PPMStream::
+ppmstream::
 verify_ppm_file(std::string filename, size_t expected_width, size_t expected_height)
 {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);

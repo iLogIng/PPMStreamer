@@ -24,8 +24,6 @@ public:
 
     PPMBuffer(size_t width, size_t height, RGB bk_color = ppmstream::RGB::black());
 
-    PPMBuffer(size_t width, size_t height, const std::vector<RGB>& data);
-
     // copy constructor
     PPMBuffer(const PPMBuffer&) = delete;
     PPMBuffer& operator =(const PPMBuffer&) = delete;
@@ -61,15 +59,10 @@ public:
 
 private:
 
-    // (x, y) is valid position
-    bool is_valid_position(size_t x, size_t y) const;
-    // (x, y) to index of pixels buffer
-    size_t to_index(size_t x, size_t y) const;
-    // index of pixels buffer to (x, y)
-    std::pair<size_t, size_t> to_position(size_t index) const;
     // check bounds
     void check_bounds(size_t x, size_t y) const;
 
+#pragma region Buffer Index
 public:
 
     // (x, y) rgb value
@@ -86,9 +79,8 @@ public:
     RGB& operator [](size_t n);
     const RGB& operator [](size_t n) const;
 
+#pragma endregion
 public:
-    // copy from other buffer
-    void copy_from(const PPMBuffer& other);
     // clear all buffer
     void clear();
 
