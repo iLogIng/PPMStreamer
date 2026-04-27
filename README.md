@@ -1,59 +1,89 @@
 # PPMStream
 
-> **VERSION 0.1.0**
-> **2025.12.05**
->
+> **Version** v0.2.0 (in progress)
+> **Standard** C++17 · **Dependencies** None (C++ standard library only)
 
-## 项目简介 Description
+A zero-dependency C++ library for PPM image file I/O, pixel buffer management, and raster drawing.
 
-**PPMStream** 是一个基于 ***C++11*** 特性，包装 ***iofstream*** 文件读写流，提供 **.ppm** 格式二进制文件读写的库
+## Features
 
-- 设计背景：.ppm 图像格式很有趣，想包装针对于该格式文件的读写库，以更加简单的进行文件读写编辑。设计初期有考虑过使用该库进行图像处理算法的实践。
+| Status | Module | Description |
+|--------|--------|-------------|
+| ✅ | **math** | Vector (`vec2`/`vec3`/`vec4`) and Matrix (`mat2`/`mat3`/`mat4`) templates with arithmetic, dot/cross/outer |
+| ✅ | **RGB** | 24-bit RGB pixel with color presets, mixing, grayscale, complementary |
+| ✅ | **Point** | 2D coordinate template (`PointI`/`PointF`/`PointD`) |
+| ✅ | **PPMBuffer** | Pixel buffer container with bounds-checked access |
+| ✅ | **PPMDrawer** | Drawing primitives: point, line (Bresenham), row/column segment, rectangle fill |
+| ✅ | **PPMStream** | PPM P6 binary file writer with `ppm_meta_info` / `ppm_file_info()` metadata query |
+| 🚧 | **RGBA / Pixel** | RGBA pixel and composited Pixel (color + position) — placeholders |
+| ❌ | **PNMStream** | Abstract base for PPM → PAM → PNM extension |
+| ❌ | **CMake build** | Currently using hand-written Makefile |
+| ❌ | **Tests** | Test suite not yet implemented |
+| ❌ | **Pixel data loading** | Reading PPM pixel data not yet implemented |
+| ❌ | **Extended formats** | P5 (grayscale), P3 (ASCII), P4 (black/white) |
 
------
+## Project Structure
 
-## 功能特性 Features
-
-- **数学库**
-  - ***Vec.hpp*** 向量类头文件
-  - ***Mat.hpp*** 矩阵类头文件
-  
-- **辅助库**
-  - ***RGB.hpp*** RGB像素结构库
-  - ***Point.hpp*** 点结构库
-  
-- **文件读写包装类**
-  - ***PPMBuffer.hpp*** 提供 **.ppm** 格式图像文件内存缓冲区的类，目前直接将一张图像映射到一个总像素大小的内存块中
-  - ***PPMStream.hpp*** 提供 **.ppm** 格式图像文件的读写流类封装，包装了 ***iofstream*** 文件读写流
-    - **PPMStream** 类，提供缓冲区的持久保存
-    - **PPMDrawer** 类，是 **PPMStream** 类的一个内部类，目前用于进行真正的缓冲区像素(**PPMBuffer**)读写功能，通过引用将该内部类导出，对唯一文件缓冲区进行读写。
-
-## 快速开始 Getting Start
-
-- **>= C++11**
-
-## 文件结构
-
-```text
-.
-├── CMakeLists.txt
-├── include
-│   ├── math
-│   │   ├── Mat.hpp
-│   │   └── Vec.hpp
-│   ├── stream
-│   │   ├── PPMBuffer.hpp
-│   │   └── PPMStream.hpp
-│   └── utils
-│       ├── Point.hpp
-│       └── RGB.hpp
-├── LICENSE
-├── main.cpp
-├── makefile
-├── README.md
-├── src
-├── tests
-└── TODO.md
+```
+include/ppmstream/
+├── ppmstream.hpp           # Unified entry header
+├── math/
+│   ├── Vec.hpp             # N-dimensional vector template
+│   └── Mat.hpp             # N×N matrix template
+├── pixel/
+│   ├── RGB.hpp             # RGB pixel + color presets
+│   ├── RGBA.hpp            # RGBA pixel (placeholder)
+│   ├── Pixel.hpp           # Color + position composite (placeholder)
+│   └── Point.hpp           # 2D coordinate template
+└── stream/
+    ├── PNMStream.hpp       # Abstract base (placeholder)
+    ├── PPMStream.hpp       # PPM format read/write stream
+    ├── PPMBuffer.hpp       # Pixel memory buffer
+    └── PPMDrawer.hpp       # Drawing primitives
 ```
 
-## END
+## Quick Start
+
+```cpp
+#include <ppmstream.hpp>
+using namespace ppmstream;
+
+PPMStream ppms("output.ppm", 800, 600, 255);
+PPMDrawer drawer(ppms.buffer());
+
+// Draw a red diagonal line
+drawer.draw_line({0, 0}, {799, 599}, RGB::red());
+
+// Fill a blue rectangle
+drawer.fill_rectangle({100, 100}, 200, 150, RGB::blue());
+
+ppms.close();  // flush pixels to file
+```
+
+## Type Aliases
+
+```cpp
+// math
+using vec2f = Vector<float, 2>;  using vec2 = vec2f;
+using vec3f = Vector<float, 3>;  using vec3 = vec3f;
+using vec4f = Vector<float, 4>;  using vec4 = vec4f;
+using mat2f = Matrix<float, 2>;  using mat2 = mat2f;
+using mat3f = Matrix<float, 3>;  using mat3 = mat3f;
+using mat4f = Matrix<float, 4>;  using mat4 = mat4f;
+
+// pixel
+using PointI = Point<int>;
+using PointF = Point<float>;
+using PointD = Point<double>;
+```
+
+## Remaining Work
+
+- [ ] PNMStream abstract base class
+- [ ] CMake build system (replacing Makefile)
+- [ ] Unit tests
+- [ ] PPM pixel data loading (reading)
+- [ ] RGBA / Pixel type implementation
+- [ ] Extended formats (P5/P3/P4)
+- [ ] Image transforms (scale/rotate/crop/flip)
+- [ ] Anti-aliased rasterization

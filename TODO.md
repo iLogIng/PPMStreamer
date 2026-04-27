@@ -1,16 +1,33 @@
+# TODO
 
-# TODO LIST
+## 核心功能
+- [ ] PPM 文件读取（ifs_ + read_pixel + save）
+- [ ] PNMStream 抽象基类（PPM → PAM → PNM 扩展）
+- [ ] CMake 构建系统
+- [ ] ppmstream.hpp 统一入口头文件
 
-1. 根据图形学需要改造Vec Mat类
-    - 改进Vec Mat类的表达式重载的计算逻辑
-    - ***缩放 旋转 切变 平移***操作
-    - ***点 向量***的信息附加
+## 绘图能力
+- [x] draw_point / draw_line（Bresenham）
+- [x] draw_rectangle
+- [x] fill_rect / fill_row / fill_col
+- [ ] 三角形光栅化
+- [ ] 画圆（Bresenham）
+- [ ] 抗锯齿（SSAA / MSAA）
+- [ ] 卷积滤波
 
-2. 编写三角形光栅化程序模块
-    - 添加***抗锯齿***方法
-    - 添加卷积滤波操作
-    
-3. 编写适用于**CMake**的构建文件
+## 图像变换
+- [ ] 缩放 / 旋转 / 裁剪 / 翻转
 
-4. 完善测试
+## 格式扩展
+- [ ] RGBA / Pixel 类型（PAM 准备）
+- [ ] P5（灰度）/ P3（ASCII）/ P4（黑白）
 
+## 质量
+- [x] 代码分离（.hpp + .cpp）
+- [x] PPMDrawer 解耦（引用 PPMBuffer）
+- [x] PPMBuffer 瘦身（移除绘图操作）
+- [x] draw_rectangle 补齐实现
+- [ ] 单元测试
+- [ ] noexcept / constexpr 标注
+- [ ] 命名空间 closing 注释修正
+- [ ] ffmpeg 调用解耦为独立脚本
