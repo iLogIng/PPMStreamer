@@ -1,4 +1,4 @@
-#include "../../include/ppmstream/stream/PPMStream.hpp"
+#include "../../include/pnmstream/stream/PPMStream.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -15,7 +15,7 @@
 
 // write to init the ppm head info
 void
-ppmstream::PPMStream::
+pnmstream::PPMStream::
 init_ppm_header(size_t w, size_t h, int c)
 {
     ppmfs_ << "P6\n";
@@ -28,8 +28,8 @@ init_ppm_header(size_t w, size_t h, int c)
 
 // open ppm file with exception check
 void
-ppmstream::PPMStream::
-open_file(const std::string& filename, ppmstream::OpenMode mode)
+pnmstream::PPMStream::
+open_file(const std::string& filename, pnmstream::OpenMode mode)
 {
     if(ppmfs_.is_open())
     {
@@ -43,11 +43,11 @@ open_file(const std::string& filename, ppmstream::OpenMode mode)
 }
 
 // constructor
-ppmstream::PPMStream::
+pnmstream::PPMStream::
 PPMStream()
 {}
 
-ppmstream::PPMStream::
+pnmstream::PPMStream::
 PPMStream(std::string filename,
     size_t width, size_t height,
     int color_depth, RGB bk_color,
@@ -58,7 +58,7 @@ PPMStream(std::string filename,
     init_ppm_header(width, height, color_depth);
 }
 
-ppmstream::PPMStream::
+pnmstream::PPMStream::
 PPMStream(std::string filename,
     size_t scale, size_t w, size_t h,
     int color_depth, RGB bk_color,
@@ -66,26 +66,26 @@ PPMStream(std::string filename,
     : PPMStream(filename, w * scale, h * scale, color_depth, bk_color, mode)
 { }
 
-ppmstream::PPMStream::
+pnmstream::PPMStream::
 ~PPMStream()
 {
     close();
 }
 
-ppmstream::PPMBuffer&
-ppmstream::PPMStream::
+pnmstream::PPMBuffer&
+pnmstream::PPMStream::
 buffer()
 {
     return this->pixels_;
 }
 
 // normal open ppm file
-ppmstream::PPMStream&
-ppmstream::PPMStream::
+pnmstream::PPMStream&
+pnmstream::PPMStream::
 open(std::string filename,
     size_t width, size_t height,
     int color_depth, RGB bk_color,
-    ppmstream::OpenMode mode)
+    pnmstream::OpenMode mode)
 {
     color_depth_ = color_depth;
     open_file(filename, mode);
@@ -96,19 +96,19 @@ open(std::string filename,
 }
 
 // normal scale open ppm file
-ppmstream::PPMStream&
-ppmstream::PPMStream::
+pnmstream::PPMStream&
+pnmstream::PPMStream::
 open(std::string filename,
     size_t scale, size_t w, size_t h,
     int color_depth, RGB bk_color,
-    ppmstream::OpenMode mode)
+    pnmstream::OpenMode mode)
 {
     return open(filename, w * scale, h * scale, color_depth, bk_color, mode);
 }
 
 // close the ppm file stream
 void
-ppmstream::PPMStream::
+pnmstream::PPMStream::
 close()
 {
     if(ppmfs_.is_open())
@@ -124,7 +124,7 @@ close()
 
 // is ppm file open
 bool
-ppmstream::PPMStream::
+pnmstream::PPMStream::
 is_open() const
 {
     return ppmfs_.is_open();
@@ -132,14 +132,14 @@ is_open() const
 
 // if file at end of file
 bool
-ppmstream::PPMStream::
+pnmstream::PPMStream::
 eof() const
 {
     return ppmfs_.eof();
 }
 
-ppmstream::ppm_meta_info
-ppmstream::
+pnmstream::ppm_meta_info
+pnmstream::
 ppm_file_info(const std::string& filename)
 {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
@@ -175,7 +175,7 @@ ppm_file_info(const std::string& filename)
 }
 
 void
-ppmstream::
+pnmstream::
 verify_ppm_file(std::string filename, size_t expected_width, size_t expected_height)
 {
     auto meta = ppm_file_info(filename);
