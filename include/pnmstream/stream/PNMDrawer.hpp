@@ -33,10 +33,10 @@ public:
 #pragma region Drawing Operation
 public:
     // redraw the whole buffer
-    void redraw(color_type rgb);
+    void redraw(color_type color);
 
     // draw pixel by (x, y)
-    void draw_point(PointI point, color_type rgb);
+    void draw_point(PointI point, color_type color);
 
     // draw a line (Bresenham)
     void draw_line(PointI p0, PointI p1, color_type color);
@@ -63,24 +63,24 @@ PNMDrawer(pnmstream::PNMBuffer<color_type>& buffer)
 template<typename color_type>
 void
 pnmstream::PNMDrawer<color_type>::
-redraw(color_type rgb)
+redraw(color_type color)
 {
     for(size_t i = 0; i < buffer_.size(); ++i)
     {
-        buffer_[i] = rgb;
+        buffer_[i] = color;
     }
 }
 
 template<typename color_type>
 void
 pnmstream::PNMDrawer<color_type>::
-draw_point(PointI point, color_type rgb)
+draw_point(PointI point, color_type color)
 {
     if(point.x >= 0 && point.y >= 0
         && static_cast<size_t>(point.x) < buffer_.width()
         && static_cast<size_t>(point.y) < buffer_.height())
     {
-        buffer_(point.x, point.y) = rgb;
+        buffer_(point.x, point.y) = color;
     }
 }
 

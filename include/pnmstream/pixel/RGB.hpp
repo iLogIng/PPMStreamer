@@ -6,6 +6,7 @@
 namespace pnmstream
 {
 
+// RGB 色彩
 struct RGB
 {
     using rgb_type = uint8_t;

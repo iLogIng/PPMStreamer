@@ -8,6 +8,7 @@
 namespace pnmstream
 {
 
+// RGBA 色彩
 struct RGBA
 {
     using rgba_type = uint8_t;
