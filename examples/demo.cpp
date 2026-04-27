@@ -4,16 +4,13 @@
 #include <chrono>
 #include <thread>
 
-#include "../include/ppmstream/stream/PPMStream.hpp"
-#include "../include/ppmstream/stream/PPMDrawer.hpp"
-#include "../include/ppmstream/math/Vec.hpp"
-#include "../include/ppmstream/math/Mat.hpp"
+#include "../include/ppmstream.hpp"
 
 void chess_board();
 
-void shader_test();
+int shader_test();
 
-void multi_thread_shader_test();
+int multi_thread_shader_test();
 
 void pure_dark_red();
 
@@ -50,9 +47,9 @@ void chess_board()
     PPMStream ppms(output_file.c_str(), scale, w, h, colors);
     PPMDrawer drawer(ppms.buffer());
 
-    for(int y = 0; y < scale * h; ++y)
+    for(int y = 0; static_cast<size_t>(y) < scale * h; ++y)
     {
-        for(int x = 0; x < scale * w; ++x)
+        for(int x = 0; static_cast<size_t>(x) < scale * w; ++x)
         {
             if((y/scale + x/scale) % 2)
             {
@@ -70,7 +67,7 @@ void chess_board()
     std::cout << "Generate " << output_file << std::endl;
 }
 
-void shader_test()
+int shader_test()
 {
     using namespace ppmstream;
 
@@ -154,6 +151,7 @@ void shader_test()
     std::cout << std::endl;
 
     int statue = system((std::string("ffmpeg -i ") + ppm_path_format.c_str() + " -r " + std::to_string(fps) + " " + (output_video_dir / "output.mp4").c_str()).data());
+    return statue;
 }
 
 void multi_thread_shader_of_shader_test(size_t fps, size_t start_frame, size_t end_frame, const std::string& ppm_path_format)
@@ -243,7 +241,7 @@ void multi_thread_shader_of_shader_test(size_t fps, size_t start_frame, size_t e
     return;
 }
 
-void multi_thread_shader_test()
+int multi_thread_shader_test()
 {
     using namespace ppmstream;
 
@@ -294,6 +292,7 @@ void multi_thread_shader_test()
 
     // use the ffmpeg to create the mp4
     int statue = system((std::string("ffmpeg -i ") + ppm_path_format.c_str() + " -r " + std::to_string(fps).append(" ") + mp4_path_format.c_str()).data());
+    return statue;
 }
 
 void pure_dark_red()
@@ -310,9 +309,9 @@ void pure_dark_red()
     PPMStream ppms(ppm_output_path, width, height, colors);
     PPMDrawer drawer(ppms.buffer());
 
-    for(size_t y = 0; y < height; ++y)
+    for(int y = 0; y < height; ++y)
     {
-        for(size_t x = 0; x < width; ++x)
+        for(int x = 0; x < width; ++x)
         {
             drawer.draw_point({x, y}, {0xAA, 0x00, 0x00});
         }
