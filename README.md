@@ -1,48 +1,48 @@
 # PPMStream
 
-> **Version** v0.2.0 (in progress)
-> **Standard** C++17 · **Dependencies** None (C++ standard library only)
+> **版本** v0.2.0（开发中）
+> **标准** C++17 · **依赖** 无（仅使用 C++ 标准库）
 
-A zero-dependency C++ library for PPM image file I/O, pixel buffer management, and raster drawing.
+一个零依赖的 C++ 库，用于 PPM 图像文件读写、像素缓冲区管理以及光栅绘图。
 
-## Features
+## 特性
 
-| Status | Module | Description |
+| 状态 | 模块 | 描述 |
 |--------|--------|-------------|
-| ✅ | **math** | Vector (`vec2`/`vec3`/`vec4`) and Matrix (`mat2`/`mat3`/`mat4`) templates with arithmetic, dot/cross/outer |
-| ✅ | **RGB** | 24-bit RGB pixel with color presets, mixing, grayscale, complementary |
-| ✅ | **Point** | 2D coordinate template (`PointI`/`PointF`/`PointD`) |
-| ✅ | **PPMBuffer** | Pixel buffer container with bounds-checked access |
-| ✅ | **PPMDrawer** | Drawing primitives: point, line (Bresenham), row/column segment, rectangle fill |
-| ✅ | **PPMStream** | PPM P6 binary file writer with `ppm_meta_info` / `ppm_file_info()` metadata query |
-| 🚧 | **RGBA / Pixel** | RGBA pixel and composited Pixel (color + position) — placeholders |
-| ❌ | **PNMStream** | Abstract base for PPM → PAM → PNM extension |
-| ❌ | **CMake build** | Currently using hand-written Makefile |
-| ❌ | **Tests** | Test suite not yet implemented |
-| ❌ | **Pixel data loading** | Reading PPM pixel data not yet implemented |
-| ❌ | **Extended formats** | P5 (grayscale), P3 (ASCII), P4 (black/white) |
+| ✅ | **math** | 向量（`vec2`/`vec3`/`vec4`）和矩阵（`mat2`/`mat3`/`mat4`）模板，支持算术运算、点积/叉积/外积 |
+| ✅ | **RGB** | 24 位 RGB 像素，提供颜色预设、混合、灰度、互补色 |
+| ✅ | **Point** | 二维坐标模板（`PointI`/`PointF`/`PointD`） |
+| ✅ | **PPMBuffer** | 像素缓冲区容器，带边界检查的访问 |
+| ✅ | **PPMDrawer** | 绘图基本操作：点、线段（Bresenham）、行/列片段、矩形填充 |
+| ✅ | **PPMStream** | PPM P6 二进制文件写入器，提供 `ppm_meta_info` / `ppm_file_info()` 元数据查询 |
+| ✅ | **RGBA / Pixel** | 带 Alpha 通道的 RGBA 像素，以及复合的 Pixel（颜色 + 位置） |
+| ❌ | **PNMStream** | 抽象基类，用于 PPM → PAM → PNM 扩展 |
+| ❌ | **CMake 构建** | 目前使用手写 Makefile |
+| ❌ | **测试** | 测试套件尚未实现 |
+| ❌ | **像素数据加载** | 读取 PPM 像素数据尚未实现 |
+| ❌ | **扩展格式** | P5（灰度）、P3（ASCII）、P4（黑白） |
 
-## Project Structure
+## 项目结构
 
-```
+```text
 include/ppmstream/
-├── ppmstream.hpp           # Unified entry header
+├── ppmstream.hpp           # 统一入口头文件
 ├── math/
-│   ├── Vec.hpp             # N-dimensional vector template
-│   └── Mat.hpp             # N×N matrix template
+│   ├── Vec.hpp             # N 维向量模板
+│   └── Mat.hpp             # N×N 矩阵模板
 ├── pixel/
-│   ├── RGB.hpp             # RGB pixel + color presets
-│   ├── RGBA.hpp            # RGBA pixel (placeholder)
-│   ├── Pixel.hpp           # Color + position composite (placeholder)
-│   └── Point.hpp           # 2D coordinate template
+│   ├── RGB.hpp             # RGB 像素 + 颜色预设
+│   ├── RGBA.hpp            # RGBA 像素（占位）
+│   ├── Pixel.hpp           # 颜色 + 位置复合（占位）
+│   └── Point.hpp           # 二维坐标模板
 └── stream/
-    ├── PNMStream.hpp       # Abstract base (placeholder)
-    ├── PPMStream.hpp       # PPM format read/write stream
-    ├── PPMBuffer.hpp       # Pixel memory buffer
-    └── PPMDrawer.hpp       # Drawing primitives
+    ├── PNMStream.hpp       # 抽象基类（占位）
+    ├── PPMStream.hpp       # PPM 格式读写流
+    ├── PPMBuffer.hpp       # 像素内存缓冲区
+    └── PPMDrawer.hpp       # 绘图基本操作
 ```
 
-## Quick Start
+## 快速开始
 
 ```cpp
 #include <ppmstream.hpp>
@@ -51,39 +51,40 @@ using namespace ppmstream;
 PPMStream ppms("output.ppm", 800, 600, 255);
 PPMDrawer drawer(ppms.buffer());
 
-// Draw a red diagonal line
+// 绘制一条红色对角线
 drawer.draw_line({0, 0}, {799, 599}, RGB::red());
 
-// Fill a blue rectangle
+// 填充一个蓝色矩形
 drawer.fill_rectangle({100, 100}, 200, 150, RGB::blue());
 
-ppms.close();  // flush pixels to file
+// 将像素刷新到文件
+ppms.close();
 ```
 
-## Type Aliases
+## 类型别名
 
 ```cpp
-// math
+// vec
 using vec2f = Vector<float, 2>;  using vec2 = vec2f;
 using vec3f = Vector<float, 3>;  using vec3 = vec3f;
 using vec4f = Vector<float, 4>;  using vec4 = vec4f;
+// mat
 using mat2f = Matrix<float, 2>;  using mat2 = mat2f;
 using mat3f = Matrix<float, 3>;  using mat3 = mat3f;
 using mat4f = Matrix<float, 4>;  using mat4 = mat4f;
 
-// pixel
+// point
 using PointI = Point<int>;
 using PointF = Point<float>;
 using PointD = Point<double>;
 ```
 
-## Remaining Work
+## 待完成工作
 
-- [ ] PNMStream abstract base class
-- [ ] CMake build system (replacing Makefile)
-- [ ] Unit tests
-- [ ] PPM pixel data loading (reading)
-- [ ] RGBA / Pixel type implementation
-- [ ] Extended formats (P5/P3/P4)
-- [ ] Image transforms (scale/rotate/crop/flip)
-- [ ] Anti-aliased rasterization
+- [ ] PNMStream 抽象基类
+- [ ] CMake 构建系统（替换 Makefile）
+- [ ] 单元测试
+- [ ] PPM 像素数据加载（读取）
+- [ ] 扩展格式（P5/P3/P4）
+- [ ] 图像变换（缩放/旋转/裁剪/翻转）
+- [ ] 抗锯齿光栅化
