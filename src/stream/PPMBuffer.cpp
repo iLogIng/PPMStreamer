@@ -30,7 +30,7 @@ operator =(PPMBuffer&& other)
 // ppm file width
 std::size_t
 ppmstream::PPMBuffer::
-width() const
+width() const noexcept
 {
     return width_;
 }
@@ -38,7 +38,7 @@ width() const
 // ppm file height
 std::size_t
 ppmstream::PPMBuffer::
-height() const
+height() const noexcept
 {
     return height_;
 }
@@ -46,7 +46,7 @@ height() const
 // ppm file pixels: width * height
 std::size_t
 ppmstream::PPMBuffer::
-size() const
+size() const noexcept
 {
     return pixels_.size();
 }
@@ -62,7 +62,7 @@ bytes() const
 // data pointer
 const ppmstream::RGB*
 ppmstream::PPMBuffer::
-data() const
+data() const noexcept
 {
     return pixels_.data();
 }
@@ -86,7 +86,7 @@ buffer() const
 // the buffer is empty
 bool
 ppmstream::PPMBuffer::
-empty() const
+empty() const noexcept
 {
     return pixels_.empty();
 }

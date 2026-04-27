@@ -39,21 +39,21 @@ public:
 public:
 
     // ppm file width
-    size_t width() const;
+    size_t width() const noexcept;
     // ppm file height
-    size_t height() const;
+    size_t height() const noexcept;
     // ppm file pixels: width * height
-    size_t size() const;
+    size_t size() const noexcept;
     // bytes size: pixels * sizeof(RGB)
     size_t bytes() const;
     // data pointer
-    const RGB* data() const;
+    const RGB* data() const noexcept;
     // data buffer container
-    std::vector<RGB>& buffer();
+    std::vector<RGB>& buffer() noexcept;
     // data buffer container
-    const std::vector<RGB>& buffer() const;
+    const std::vector<RGB>& buffer() const noexcept;
     // the buffer is empty
-    bool empty() const;
+    bool empty() const noexcept;
     // reset the buffer
     void reset(size_t width, size_t height, ppmstream::RGB color = ppmstream::RGB::black());
 

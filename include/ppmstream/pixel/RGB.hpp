@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <cmath>
-#include <stdexcept>
 
 namespace ppmstream
 {
@@ -95,7 +94,7 @@ struct RGB
     }
 
     // channel mix ths * (1 - t) + rth * t
-    void mix(RGB& rth, float t)
+    void mix(const RGB& rth, float t)
     {
         t = std::max(0.0f, std::min(1.0f, t));
         float k = 1 - t;
@@ -105,7 +104,7 @@ struct RGB
     }
 
     // channel mix a * (1 - t) + b * t
-    static RGB mix(RGB& a, RGB& b, float t)
+    static RGB mix(const RGB& a, const RGB& b, float t)
     {
         t = std::max(0.0f, std::min(1.0f, t));
         float k = 1 - t;
@@ -123,11 +122,13 @@ struct RGB
                 | static_cast<color_type>(b);
     }
 
+    // 互补色
     RGB complementary() const
     {
         return RGB(0xFF - r, 0xFF - g, 0xFF - b);
     }
 
+    // 灰度
     RGB grey_scale() const
     {
         rgb_type grey = static_cast<rgb_type>(0.299f * r + 0.587f * g + 0.114f * b);
