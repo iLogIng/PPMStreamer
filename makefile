@@ -10,7 +10,6 @@ LIB_DIR      = lib
 INCLUDES = -I$(INCLUDE_DIR)
 
 LIB_SRCS = $(SRC_DIR)/stream/buffer/PPMBuffer.cpp \
-            $(SRC_DIR)/stream/PNMDrawer.cpp \
             $(SRC_DIR)/stream/PPMStream.cpp
 
 LIB_OBJS = $(LIB_SRCS:.cpp=.o)
@@ -47,6 +46,7 @@ $(LIB_DIR):
 clean:
 	rm -rf $(LIB_DIR)
 	rm -f $(SRC_DIR)/stream/*.o $(SRC_DIR)/stream/*.d
+	rm -f $(SRC_DIR)/stream/buffer/*.o $(SRC_DIR)/stream/buffer/*.d
 
 # 输出目录
 OUTPUTS = ./outputs
