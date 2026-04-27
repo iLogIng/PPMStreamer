@@ -4,7 +4,7 @@
 #include <chrono>
 #include <thread>
 
-#include "../include/ppmstream.hpp"
+#include "../include/pnmstream.hpp"
 
 void chess_board();
 
@@ -36,7 +36,7 @@ int main()
 
 void chess_board()
 {
-    using namespace ppmstream;
+    using namespace pnmstream;
 
     const size_t scale = 120;
     const size_t w = 16;
@@ -45,7 +45,7 @@ void chess_board()
     std::string output_file_name = "chess-board.ppm";
     std::filesystem::path output_file = output_frames_dir / output_file_name;
     PPMStream ppms(output_file.c_str(), scale, w, h, colors);
-    PPMDrawer drawer(ppms.buffer());
+    PNMDrawer drawer(ppms.buffer());
 
     for(int y = 0; static_cast<size_t>(y) < scale * h; ++y)
     {
@@ -69,7 +69,7 @@ void chess_board()
 
 int shader_test()
 {
-    using namespace ppmstream;
+    using namespace pnmstream;
 
     char buff[255];
     const size_t fps = 30;
@@ -96,7 +96,7 @@ int shader_test()
         std::string output_path(buff);
 
         ppms.open(output_path, scale, w, h, colors, RGB::black(), OpenMode::Write);
-        PPMDrawer drawer(ppms.buffer());
+        PNMDrawer drawer(ppms.buffer());
 
         float t = (float)frame / fps;
         vec2 r = {(float)width, (float)height};
@@ -156,7 +156,7 @@ int shader_test()
 
 void multi_thread_shader_of_shader_test(size_t fps, size_t start_frame, size_t end_frame, const std::string& ppm_path_format)
 {
-    using namespace ppmstream;
+    using namespace pnmstream;
 
     char buff[255];
 
@@ -192,7 +192,7 @@ void multi_thread_shader_of_shader_test(size_t fps, size_t start_frame, size_t e
         // open ppm file
         ppms.open(output_path, scale, w, h, colors, RGB::black(), OpenMode::Write);
         // drawer
-        PPMDrawer drawer(ppms.buffer());
+        PNMDrawer drawer(ppms.buffer());
 
         // the seconds
         t = (float)frame / fps;
@@ -243,7 +243,7 @@ void multi_thread_shader_of_shader_test(size_t fps, size_t start_frame, size_t e
 
 int multi_thread_shader_test()
 {
-    using namespace ppmstream;
+    using namespace pnmstream;
 
     const size_t fps = 30;                  // frame per second
     const size_t sec = 10;                  // seconds
@@ -297,7 +297,7 @@ int multi_thread_shader_test()
 
 void pure_dark_red()
 {
-    using namespace ppmstream;
+    using namespace pnmstream;
 
     std::string ppm_file_name = "pure_dark_red.ppm";
     std::filesystem::path ppm_output_path = output_frames_dir / ppm_file_name;
@@ -307,7 +307,7 @@ void pure_dark_red()
     const int colors = 255;
 
     PPMStream ppms(ppm_output_path, width, height, colors);
-    PPMDrawer drawer(ppms.buffer());
+    PNMDrawer drawer(ppms.buffer());
 
     for(int y = 0; y < height; ++y)
     {
@@ -325,7 +325,7 @@ void pure_dark_red()
 
 void rainbow_picture()
 {
-    using namespace ppmstream;
+    using namespace pnmstream;
     
     std::string output_file_name = "rainbow_picture.ppm";
     std::filesystem::path ppm_output_path = output_frames_dir / output_file_name;
@@ -378,7 +378,7 @@ void rainbow_picture()
 
 void rhombus()
 {
-    using namespace ppmstream;
+    using namespace pnmstream;
 
     std::string ppm_file_name = "rhombus.ppm";
     std::filesystem::path ppm_output_path = output_frames_dir / ppm_file_name;
@@ -390,7 +390,7 @@ void rhombus()
     const int colors = 255;
 
     PPMStream stream(ppm_output_path, width, height, colors, RGB(0xAA, 0x00, 0x00));
-    PPMDrawer drawer(stream.buffer());
+    PNMDrawer drawer(stream.buffer());
 
     const int N = 100;
     for(int i = 0; i < N; ++i)

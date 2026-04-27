@@ -7,17 +7,17 @@ SRC_DIR      = src
 INCLUDE_DIR  = include
 LIB_DIR      = lib
 
-INCLUDES = -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/ppmstream
+INCLUDES = -I$(INCLUDE_DIR)
 
-LIB_SRCS = $(SRC_DIR)/stream/PPMBuffer.cpp \
-            $(SRC_DIR)/stream/PPMDrawer.cpp \
+LIB_SRCS = $(SRC_DIR)/stream/buffer/PPMBuffer.cpp \
+            $(SRC_DIR)/stream/PNMDrawer.cpp \
             $(SRC_DIR)/stream/PPMStream.cpp
 
 LIB_OBJS = $(LIB_SRCS:.cpp=.o)
 
 DEPS = $(LIB_OBJS:.o=.d)
 
-LIB_TARGET = $(LIB_DIR)/libppmstream.a
+LIB_TARGET = $(LIB_DIR)/libpnmstream.a
 
 # = = = = = = =
 

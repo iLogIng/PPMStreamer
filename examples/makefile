@@ -5,18 +5,12 @@ CXXFLAGS = -Wall -Wextra -g $(CXXSTD)
 INCLUDE_DIR = ../include
 SRC_DIR = ../src/stream
 
-SRCS = $(SRC_DIR)/*.cpp demo.cpp
-INCLUDES = $(INCLUDE_DIR)/ppmstream.hpp
-# INCLUDES = -I$(INCLUDE_DIR) -I$(INCLUDE_DIR)/ppmstream
+SRCS = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/buffer/*.cpp)
 
-demo: $(INCLUDES) $(SRCS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+demo: demo.cpp $(SRCS)
+	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) $^ -o $@
 
-# = = = = = = =
-
-.PHONY:
-	clean
+.PHONY: clean
 
 clean:
-	rm demo
-
+	rm -f demo
