@@ -168,4 +168,4 @@ struct RGB
 
 };  // class RGB
 
-}   // namespace ppm
+}   // namespace ppmstream

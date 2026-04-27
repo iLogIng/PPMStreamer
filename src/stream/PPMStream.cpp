@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <fstream>
 #include <sstream>
+#include <limits>
 
 #include <stdint.h>
 #include <utility>
@@ -137,51 +138,73 @@ eof() const
     return ppmfs_.eof();
 }
 
-void
+ppmstream::ppm_meta_info
 ppmstream::
-verify_ppm_file(std::string filename, size_t expected_width, size_t expected_height)
+ppm_file_info(const std::string& filename)
 {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
 
     if(!file)
     {
-        std::cerr << "CANNOT OPEN THE PPM FILE" << std::endl;
-        return;
+        throw std::runtime_error("CANNOT OPEN THE PPM FILE: " + filename);
     }
 
-    std::streamsize file_size = file.tellg();
+    ppm_meta_info meta = {};
+    meta.file_size = static_cast<size_t>(file.tellg());
     file.seekg(0);
 
-    std::string header;
-    std::getline(file, header);     // P6
-    std::getline(file, header);     // width height
-    std::getline(file, header);     // color_depth
+    auto skip_comments = [&file]()
+    {
+        while(file.peek() == '#')
+        {
+            file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    };
+
+    std::getline(file, meta.magic);
+    skip_comments();
+    file >> meta.width >> meta.height;
+    skip_comments();
+    file >> meta.color_depth;
+    file.ignore();
 
     std::streampos header_end = file.tellg();
-    std::streamsize pixel_data_size = file_size - header_end;
-    size_t expected_pixel_data_size = expected_width * expected_height * sizeof(RGB);
+    meta.pixels_size = meta.file_size - static_cast<size_t>(header_end);
+
+    return meta;
+}
+
+void
+ppmstream::
+verify_ppm_file(std::string filename, size_t expected_width, size_t expected_height)
+{
+    auto meta = ppm_file_info(filename);
 
     std::cout << "FILE NAME:\t" <<  filename << std::endl;
-    std::cout << "FILE SIZE:\t" << file_size << " byte\n";
-    std::cout << "HEADER END:\t" << header_end << " byte\n";
-    std::cout << "PIX DATA SIZE:\t" << pixel_data_size << " byte\n";
-    std::cout << "ABOUT\t" << pixel_data_size / 3 << " pixes\n";
+    std::cout << "FILE SIZE:\t" << meta.file_size << " byte\n";
+    std::cout << "PIX DATA SIZE:\t" << meta.pixels_size << " byte\n";
+    std::cout << "ABOUT\t" << meta.pixels_size / 3 << " pixes\n";
     std::cout << std::endl;
     std::cout << "EXPECTED WIDTH:\t" << expected_width << " pixes\n";
     std::cout << "EXPECTED HEIGHT:\t" << expected_height << " pixes\n";
+
+    size_t expected_pixel_data_size = expected_width * expected_height * sizeof(RGB);
     std::cout << "EXPECTED PIX DATA SIZE:\t" << expected_pixel_data_size << " byte\n";
     std::cout << "ABOUT\t" << expected_pixel_data_size / 3 << " pixes\n";
     std::cout << std::endl;
 
-    if(pixel_data_size == expected_pixel_data_size)
+    if(meta.pixels_size == expected_pixel_data_size)
     {
         std::cout << "CORRECT FILE SIZE" << std::endl;
     }
     else
     {
         std::cout << "WRONG FILE SIZE" << std::endl;
-        std::cout << "LACK:\t" << expected_pixel_data_size - pixel_data_size << " byte\n";
-        std::cout << "LACK PIX:\t" << (expected_pixel_data_size - pixel_data_size) / 3 << " pixes\n";
+        if(expected_pixel_data_size > meta.pixels_size)
+        {
+            std::cout << "LACK:\t" << expected_pixel_data_size - meta.pixels_size << " byte\n";
+            std::cout << "LACK PIX:\t" << (expected_pixel_data_size - meta.pixels_size) / 3 << " pixes\n";
+        }
     }
 
     std::cout << std::endl;

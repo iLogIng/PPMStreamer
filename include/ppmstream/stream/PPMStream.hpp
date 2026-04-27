@@ -1,24 +1,28 @@
 #pragma once
 
-#include <iomanip>
 #include <fstream>
-#include <sstream>
-
-#include <utility>
 #include <string>
-#include <vector>
-
 #include "PPMBuffer.hpp"
-#include "../pixel/Point.hpp"
-#include "../pixel/RGB.hpp"
 
 namespace ppmstream
 {
 
+// ppm file meta info
+struct ppm_meta_info
+{
+    std::string magic;          // magic num: P6
+    size_t width;               // width
+    size_t height;              // height
+    int color_depth;            // color depth
+    size_t file_size;           // total file size
+    size_t pixels_size;         // pixel data area size (bytes)
+};  // struct ppm_meta_info
+
+// get ppm file meta info
+ppm_meta_info ppm_file_info(const std::string& filename);
+
 enum class OpenMode
 {
-    // 读文件
-    Read = std::ios::binary | std::ios::in,
     // 更改文件
     Alter = std::ios::binary | std::ios::out | std::ios::ate,
     // 写文件
@@ -29,7 +33,7 @@ class PPMStream
 {
 private:
 
-    std::fstream ppmfs_;                // ppm输入输出流
+    std::ofstream ppmfs_;               // ppm输入输出流
     ppmstream::PPMBuffer pixels_;       // 像素缓冲
 
     int color_depth_;                   // 色深
@@ -52,7 +56,7 @@ public:
     explicit PPMStream();
 
     PPMStream(std::string filename,
-        size_t width, size_t heighl,
+        size_t width, size_t height,
         int color_depth = 255,
         RGB bk_color = ppmstream::RGB::black(),
         OpenMode mode = OpenMode::Write);

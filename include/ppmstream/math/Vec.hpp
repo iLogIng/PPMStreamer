@@ -598,4 +598,4 @@ exp(const Vector<data_type, N>& vec)
 }
 
 
-}   // namespace ppm
+}   // namespace ppmstream

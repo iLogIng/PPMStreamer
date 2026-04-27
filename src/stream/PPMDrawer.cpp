@@ -85,7 +85,7 @@ ppmstream::PPMDrawer::
 draw_row(PointI p, size_t n, RGB color)
 {
     size_t end_x = std::min(p.x + n, buffer_.width());
-    for(; p.x < end_x; ++p.x)
+    for(; static_cast<size_t>(p.x) < end_x; ++p.x)
     {
         buffer_(p.x, p.y) = color;
     }
@@ -97,7 +97,7 @@ ppmstream::PPMDrawer::
 draw_col(PointI p, size_t n, RGB color)
 {
     size_t end_y = std::min(p.y + n, buffer_.height());
-    for(; p.y < end_y; ++p.y)
+    for(; static_cast<size_t>(p.y) < end_y; ++p.y)
     {
         buffer_(p.x, p.y) = color;
     }

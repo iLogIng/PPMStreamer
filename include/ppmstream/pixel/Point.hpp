@@ -107,4 +107,4 @@ using PointI = Point<int>;
 using PointF = Point<float>;
 using PointD = Point<double>;
 
-}   // namespace ppm
+}   // namespace ppmstream

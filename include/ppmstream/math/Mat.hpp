@@ -436,4 +436,4 @@ using mat3 = mat3f;
 using mat4f = Matrix<float, 4>;
 using mat4 = mat4f;
 
-}   // namespace ppm
+}   // namespace ppmstream

@@ -12,7 +12,7 @@ class PPMDrawer
 private:
 
     // binding the PPMBuffer
-    PPMBuffer& buffer_;
+    ppmstream::PPMBuffer& buffer_;
 
 #pragma region Construction
 public:
