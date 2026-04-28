@@ -67,6 +67,14 @@ data() const noexcept
     return pixels_.data();
 }
 
+// mutable data pointer
+pnmstream::RGB*
+pnmstream::PPMBuffer::
+data() noexcept
+{
+    return pixels_.data();
+}
+
 // data buffer container
 std::vector<pnmstream::RGB>&
 pnmstream::PPMBuffer::

@@ -6,10 +6,11 @@
 namespace pnmstream
 {
 
-template<typename color_type>
+template<typename color_type_>
 class PNMBuffer
 {
-private:
+public:
+    using color_type = color_type_;
 
 public:
 
@@ -22,6 +23,7 @@ public:
     virtual size_t size() const = 0;
     virtual size_t bytes() const = 0;
     virtual const color_type* data() const = 0;
+    virtual color_type* data() = 0;
     virtual std::vector<color_type>& buffer() = 0;
     virtual const std::vector<color_type>& buffer() const = 0;
     virtual bool empty() const = 0;
@@ -47,4 +49,4 @@ public:
 
 };
 
-} // namespace pnmspace
+} // namespace pnmstream

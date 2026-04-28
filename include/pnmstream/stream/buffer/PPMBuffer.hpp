@@ -51,6 +51,8 @@ public:
     size_t bytes() const;
     // data pointer
     const RGB* data() const noexcept;
+    // mutable data pointer
+    RGB* data() noexcept;
     // data buffer container
     std::vector<RGB>& buffer() noexcept;
     // data buffer container

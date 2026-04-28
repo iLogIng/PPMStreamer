@@ -7,9 +7,10 @@
 namespace pnmstream
 {
 
-template<typename color_type>
+template<typename color_type_>
 class PNMDrawer
 {
+    using color_type = color_type_;
 private:
 
     // binding the PNMBuffer

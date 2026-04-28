@@ -5,5 +5,5 @@
 #include "pnmstream/math/Mat.hpp"
 #include "pnmstream/math/Vec.hpp"
 #include "pnmstream/stream/buffer/PPMBuffer.hpp"
-#include "pnmstream/stream/PPMStream.hpp"
+#include "pnmstream/stream/PNMStream.hpp"
 #include "pnmstream/stream/PNMDrawer.hpp"
