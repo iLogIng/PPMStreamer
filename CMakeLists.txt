@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(pnmstream
     src/stream/PNMStream.cpp
     src/stream/buffer/PPMBuffer.cpp
+    src/stream/buffer/PGMBuffer.cpp
+    src/stream/buffer/PBMBuffer.cpp
 )
 
 target_include_directories(pnmstream
