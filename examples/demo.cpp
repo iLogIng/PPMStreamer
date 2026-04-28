@@ -44,7 +44,7 @@ void chess_board()
     const int colors = 255;
     std::string output_file_name = "chess-board.ppm";
     std::filesystem::path output_file = output_frames_dir / output_file_name;
-    PPMStream ppms(output_file.c_str(), scale, w, h, colors);
+    PNMStream<PPMBuffer> ppms(output_file.c_str(), scale, w, h, colors);
     PNMDrawer drawer(ppms.buffer());
 
     for(int y = 0; static_cast<size_t>(y) < scale * h; ++y)
@@ -88,7 +88,7 @@ int shader_test()
     std::string file_format("output-%03d.ppm");
     std::filesystem::path ppm_path_format = output_frames_dir / file_format;
 
-    PPMStream ppms;
+    PNMStream<PPMBuffer> ppms;
 
     for(size_t frame = 0; frame < total_frame; ++frame)
     {
@@ -167,7 +167,7 @@ void multi_thread_shader_of_shader_test(size_t fps, size_t start_frame, size_t e
     const int height = h * scale;
     const int colors = 255;
 
-    PPMStream ppms;
+    PNMStream<PPMBuffer> ppms;
     
     // scale of the picture
     vec2 r = {(float)width, (float)height};
@@ -306,7 +306,7 @@ void pure_dark_red()
     const int height = 9 * scale;
     const int colors = 255;
 
-    PPMStream ppms(ppm_output_path, width, height, colors);
+    PNMStream<PPMBuffer> ppms(ppm_output_path, width, height, colors);
     PNMDrawer drawer(ppms.buffer());
 
     for(int y = 0; y < height; ++y)
@@ -333,7 +333,7 @@ void rainbow_picture()
     const int height = 600;
     const int colors = 255;
     
-    PPMStream ppms(ppm_output_path, width, height, colors);
+    PNMStream<PPMBuffer> ppms(ppm_output_path, width, height, colors);
     
     for(int y = 0; y < height; ++y)
     {
@@ -389,7 +389,7 @@ void rhombus()
     const int height = h * scale;
     const int colors = 255;
 
-    PPMStream stream(ppm_output_path, width, height, colors, RGB(0xAA, 0x00, 0x00));
+    PNMStream<PPMBuffer> stream(ppm_output_path, width, height, colors, RGB(0xAA, 0x00, 0x00));
     PNMDrawer drawer(stream.buffer());
 
     const int N = 100;
