@@ -46,6 +46,10 @@ struct Binary
 
     ~Binary() = default;
 
+    Binary(RGB rgb) { c = rgb.to_int() ? 1 : 0; }
+    Binary(RGBA rgba) { c = rgba.to_int() ? 1 : 0; }
+    Binary(Grayscale gray) { c = gray.g == gray.black().g ? 1 : 0; }
+
     static Binary white() { return Binary{0}; }
     static Binary black() { return Binary{1}; }
 
