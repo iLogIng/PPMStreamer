@@ -58,6 +58,9 @@ struct Grayscale
         this->g = rgba.gray_scale().r;
     }
 
+
+    static Grayscale black() { return Grayscale{0x00}; }
+    static Grayscale white() { return Grayscale{0xFF}; }
 };
 
 } // namespace pnmstream

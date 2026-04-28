@@ -1,7 +1,9 @@
 #include "../../../include/pnmstream/stream/buffer/PPMBuffer.hpp"
 
+#include <stdexcept>
+
 pnmstream::PPMBuffer::
-PPMBuffer(size_t width, size_t height, RGB bk_color)
+PPMBuffer(size_t width, size_t height, color_type bk_color)
     : width_(width), height_(height)
 {
     pixels_.resize(width * height);
@@ -51,16 +53,16 @@ size() const noexcept
     return pixels_.size();
 }
 
-// bytes size: pixels * sizeof(RGB)
+// bytes size: pixels * sizeof(color_type)
 std::size_t
 pnmstream::PPMBuffer::
 bytes() const
 {
-    return this->size() * sizeof(RGB);
+    return this->size() * sizeof(color_type);
 }
 
 // data pointer
-const pnmstream::RGB*
+const pnmstream::PPMBuffer::color_type*
 pnmstream::PPMBuffer::
 data() const noexcept
 {
@@ -68,7 +70,7 @@ data() const noexcept
 }
 
 // mutable data pointer
-pnmstream::RGB*
+pnmstream::PPMBuffer::color_type*
 pnmstream::PPMBuffer::
 data() noexcept
 {
@@ -76,7 +78,7 @@ data() noexcept
 }
 
 // data buffer container
-std::vector<pnmstream::RGB>&
+pnmstream::PPMBuffer::buffer_type&
 pnmstream::PPMBuffer::
 buffer() noexcept
 {
@@ -84,7 +86,7 @@ buffer() noexcept
 }
 
 // data buffer container
-const std::vector<pnmstream::RGB>&
+const pnmstream::PPMBuffer::buffer_type&
 pnmstream::PPMBuffer::
 buffer() const noexcept
 {
@@ -102,7 +104,7 @@ empty() const noexcept
 // reset the buffer
 void
 pnmstream::PPMBuffer::
-reset(size_t width, size_t height, pnmstream::RGB color)
+reset(size_t width, size_t height, color_type color)
 {
     width_ = width;
     height_ = height;
@@ -121,7 +123,7 @@ check_bounds(std::size_t x, std::size_t y) const
 }
 
 // (x, y) rgb value
-pnmstream::RGB&
+pnmstream::PPMBuffer::color_type&
 pnmstream::PPMBuffer::
 operator ()(size_t x, size_t y)
 {
@@ -129,7 +131,7 @@ operator ()(size_t x, size_t y)
 }
 
 // (x, y) rgb value
-const pnmstream::RGB&
+const pnmstream::PPMBuffer::color_type&
 pnmstream::PPMBuffer::
 operator ()(size_t x, size_t y) const
 {
@@ -137,7 +139,7 @@ operator ()(size_t x, size_t y) const
 }
 
 // check and visit
-pnmstream::RGB&
+pnmstream::PPMBuffer::color_type&
 pnmstream::PPMBuffer::
 at(size_t x, size_t y)
 {
@@ -146,7 +148,7 @@ at(size_t x, size_t y)
 }
 
 // check and visit
-const pnmstream::RGB&
+const pnmstream::PPMBuffer::color_type&
 pnmstream::PPMBuffer::
 at(size_t x, size_t y) const
 {
@@ -155,14 +157,14 @@ at(size_t x, size_t y) const
 }
 
 // the position
-pnmstream::RGB&
+pnmstream::PPMBuffer::color_type&
 pnmstream::PPMBuffer::
 operator [](size_t n)
 {
     return pixels_[n];
 }
 
-const pnmstream::RGB&
+const pnmstream::PPMBuffer::color_type&
 pnmstream::PPMBuffer::
 operator [](size_t n) const
 {

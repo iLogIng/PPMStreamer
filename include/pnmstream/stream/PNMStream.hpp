@@ -3,7 +3,11 @@
 #include "OpenMode.hpp"
 #include "buffer/PNMBuffer.hpp"
 #include "buffer/PPMBuffer.hpp"
+#include "buffer/PGMBuffer.hpp"
+#include "buffer/PBMBuffer.hpp"
 
+#include <cstdint>
+#include <vector>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -23,6 +27,20 @@ struct pnm_format_traits<PPMBuffer>
 {
     static constexpr const char* magic = "P6";
     static constexpr bool has_color_depth = true;
+};
+
+template<>
+struct pnm_format_traits<PGMBuffer>
+{
+    static constexpr const char* magic = "P5";
+    static constexpr bool has_color_depth = true;
+};
+
+template<>
+struct pnm_format_traits<PBMBuffer>
+{
+    static constexpr const char* magic = "P4";
+    static constexpr bool has_color_depth = false;
 };
 
 // PPM 文件元信息结构
@@ -266,11 +284,33 @@ read(const std::string& filename)
 
     // 重置缓冲并读取像素数据
     buffer_.reset(w, h);
-    file_.read(reinterpret_cast<char*>(buffer_.data()), buffer_.bytes());
 
-    if(!file_)
+    if constexpr(std::is_same_v<BufferT, PBMBuffer>)
     {
-        throw std::runtime_error("FAILED TO READ PIXEL DATA FROM: " + filename);
+        size_t pbytes = ((w + 7) / 8) * h;
+        std::vector<uint8_t> packed(pbytes);
+        file_.read(reinterpret_cast<char*>(packed.data()),
+                   static_cast<std::streamsize>(pbytes));
+        if(!file_)
+        {
+            throw std::runtime_error("FAILED TO READ PIXEL DATA FROM: " + filename);
+        }
+        for(size_t i = 0; i < w * h; ++i)
+        {
+            size_t byte_idx = i / 8;
+            size_t bit_idx  = 7 - (i % 8);
+            buffer_.data()[i] = color_type{static_cast<uint8_t>(
+                (packed[byte_idx] >> bit_idx) & 1)};
+        }
+    }
+    else
+    {
+        file_.read(reinterpret_cast<char*>(buffer_.data()),
+                   static_cast<std::streamsize>(buffer_.bytes()));
+        if(!file_)
+        {
+            throw std::runtime_error("FAILED TO READ PIXEL DATA FROM: " + filename);
+        }
     }
 
     return *this;
@@ -284,7 +324,27 @@ save()
     if(file_.is_open() && !buffer_.empty())
     {
         file_.seekp(header_size_);
-        file_.write(reinterpret_cast<const char*>(buffer_.data()), buffer_.bytes());
+        if constexpr(std::is_same_v<BufferT, PBMBuffer>)
+        {
+            size_t w = buffer_.width();
+            size_t h = buffer_.height();
+            size_t pbytes = ((w + 7) / 8) * h;
+            std::vector<uint8_t> packed(pbytes, 0);
+            for(size_t i = 0; i < w * h; ++i)
+            {
+                if(buffer_.data()[i].is_black())
+                {
+                    packed[i / 8] |= static_cast<uint8_t>(1 << (7 - (i % 8)));
+                }
+            }
+            file_.write(reinterpret_cast<const char*>(packed.data()),
+                        static_cast<std::streamsize>(pbytes));
+        }
+        else
+        {
+            file_.write(reinterpret_cast<const char*>(buffer_.data()),
+                        static_cast<std::streamsize>(buffer_.bytes()));
+        }
         file_.flush();
     }
 }

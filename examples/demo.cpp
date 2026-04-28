@@ -18,18 +18,25 @@ void rainbow_picture();
 
 void rhombus();
 
+void gray_graph();
+
+void binary_map();
+
 const std::filesystem::path outputs_dir("../outputs");
 const std::filesystem::path output_frames_dir = outputs_dir / "output-frames";
 const std::filesystem::path output_video_dir = outputs_dir / "output-video";
 
 int main()
 {
-    // multi_thread_shader_test();
     // chess_board();
     // shader_test();
+    // multi_thread_shader_test();
     // pure_dark_red();
     // rainbow_picture();
-    rhombus();
+    // rhombus();
+
+    // gray_graph();
+    binary_map();
 
     return 0;
 }
@@ -154,7 +161,7 @@ int shader_test()
     return statue;
 }
 
-void multi_thread_shader_of_shader_test(size_t fps, size_t start_frame, size_t end_frame, const std::string& ppm_path_format)
+void multi_thread_shader_for_shader_test(size_t fps, size_t start_frame, size_t end_frame, const std::string& ppm_path_format)
 {
     using namespace pnmstream;
 
@@ -267,7 +274,7 @@ int multi_thread_shader_test()
     for(size_t i = 0; i < Nthrd; ++i)
     {
         thrds.emplace_back(
-            multi_thread_shader_of_shader_test,
+            multi_thread_shader_for_shader_test,
             fps,
             i * piece, std::min((i + 1) * piece, total_frame),
             ppm_path_format
@@ -403,3 +410,46 @@ void rhombus()
 
 }
 
+
+void gray_graph()
+{
+    using namespace pnmstream;
+
+    std::string ppm_file_name = "gray_graph.ppm";
+    std::filesystem::path ppm_output_path = output_frames_dir / ppm_file_name;
+    const int scale = 60;
+    const int w = 16;
+    const int h = 9;
+    const int width = w * scale;
+    const int height = h * scale;
+    const int colors = 255;
+
+    PNMStream<PGMBuffer> stream(ppm_output_path, width, height, colors, Grayscale(0xAA));
+    PNMDrawer drawer(stream.buffer());
+
+    stream.close();
+    std::cout << "Generate: " << ppm_output_path << std::endl;
+
+}
+
+
+void binary_map()
+{
+    using namespace pnmstream;
+
+    std::string ppm_file_name = "binary_map.ppm";
+    std::filesystem::path ppm_output_path = output_frames_dir / ppm_file_name;
+    const int scale = 60;
+    const int w = 16;
+    const int h = 9;
+    const int width = w * scale;
+    const int height = h * scale;
+    const int colors = 255;
+
+    PNMStream<PBMBuffer> stream(ppm_output_path, width, height, colors, Binary::white());
+    PNMDrawer drawer(stream.buffer());
+
+    stream.close();
+    std::cout << "Generate: " << ppm_output_path << std::endl;
+
+}

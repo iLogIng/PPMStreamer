@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include "RGB.hpp"
 #include "RGBA.hpp"
 #include "Grayscale.hpp"
@@ -7,24 +8,17 @@
 namespace pnmstream
 {
 
-// 二值色
+// 二值色 (0 = White, 1 = Black)
 struct Binary
 {
-
-enum class Color
-{
-    White = 0,
-    Black = 1
-};
-
-    Color c;
+    uint8_t c;
 
     Binary()
-        : c(Color::White)
+        : c(0)
     { }
 
-    Binary(Color bin)
-        : c(bin)
+    Binary(uint8_t value)
+        : c(value ? 1 : 0)
     { }
 
     Binary(const Binary& other)
@@ -52,6 +46,11 @@ enum class Color
 
     ~Binary() = default;
 
+    static Binary white() { return Binary{0}; }
+    static Binary black() { return Binary{1}; }
+
+    bool is_white() const { return c == 0; }
+    bool is_black() const { return c != 0; }
 };
 
 } // namespace pnmstream
