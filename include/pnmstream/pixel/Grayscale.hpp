@@ -12,33 +12,33 @@ struct Grayscale
 
     gray_type g;
 
-    inline static gray_type value_lim(const gray_type& v) {
+    constexpr static gray_type value_lim(const gray_type& v) noexcept {
         return v < 0xFF ? v : 0xFF;
     }
 
-    Grayscale()
+    constexpr Grayscale() noexcept
         : g(0x00)
     {}
 
-    Grayscale(gray_type gray)
+    constexpr Grayscale(gray_type gray) noexcept
         : g(gray)
     {}
 
-    Grayscale(const Grayscale& gray)
+    constexpr Grayscale(const Grayscale& gray) noexcept
         : g(gray.g)
     {}
 
-    Grayscale& operator =(const Grayscale& other)
+    constexpr Grayscale& operator =(const Grayscale& other) noexcept
     {
         g = other.g;
         return *this;
     }
 
-    Grayscale(Grayscale&& other)
+    constexpr Grayscale(Grayscale&& other) noexcept
         : g(other.g)
     { }
 
-    Grayscale& operator =(Grayscale&& other)
+    constexpr Grayscale& operator =(Grayscale&& other) noexcept
     {
         if(&other != this)
         {
@@ -49,18 +49,15 @@ struct Grayscale
 
     ~Grayscale() = default;
 
-    Grayscale(const RGB& rgb)
-    {
-        this->g = rgb.gray_scale().r;
-    }
-    Grayscale(const RGBA& rgba)
-    {
-        this->g = rgba.gray_scale().r;
-    }
+    constexpr Grayscale(const RGB& rgb) noexcept
+        : g(rgb.gray_scale().r)
+    {}
+    constexpr Grayscale(const RGBA& rgba) noexcept
+        : g(rgba.gray_scale().r)
+    {}
 
-
-    static Grayscale black() { return Grayscale{0x00}; }
-    static Grayscale white() { return Grayscale{0xFF}; }
+    constexpr static Grayscale black() noexcept { return Grayscale{0x00}; }
+    constexpr static Grayscale white() noexcept { return Grayscale{0xFF}; }
 };
 
 } // namespace pnmstream

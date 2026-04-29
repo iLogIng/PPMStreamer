@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <type_traits>
 
 namespace pnmstream
 {
@@ -14,30 +15,28 @@ struct Point
     Ty x;
     Ty y;
 
-    // constructor
-    Point()
+    constexpr Point() noexcept
         : x(Ty{}), y(Ty{})
     {}
 
-    Point(Ty px, Ty py)
+    constexpr Point(Ty px, Ty py) noexcept
         : x(px), y(py)
     {}
 
-    Point(std::pair<Ty, Ty> point)
+    constexpr Point(std::pair<Ty, Ty> point) noexcept
         : x(point.first), y(point.second)
     {}
 
-    // copy constructor
-    Point(const Point<Ty>& other)
+    constexpr Point(const Point<Ty>& other) noexcept
         : x(other.x), y(other.y)
     {}
 
     template<typename U>
-    Point(const Point<U>& other)
+    constexpr Point(const Point<U>& other) noexcept
         : x(static_cast<Ty>(other.x)), y(static_cast<Ty>(other.y))
     {}
 
-    Point& operator =(const Point<Ty>& other)
+    constexpr Point& operator =(const Point<Ty>& other) noexcept
     {
         if(&other != this)
         {
@@ -48,7 +47,7 @@ struct Point
     }
 
     template<typename U>
-    Point& operator =(const Point<U>& other)
+    constexpr Point& operator =(const Point<U>& other) noexcept
     {
         if(&other != this)
         {
@@ -58,28 +57,27 @@ struct Point
         return *this;
     }
 
-    // move operator
-    Point(Point&& other)
-        : x(std::move(other.x)), y(std::move(other.y))
+    constexpr Point(Point&& other) noexcept
+        : x(other.x), y(other.y)
     {}
 
     template<typename U>
-    Point(Point<U>&& other)
+    constexpr Point(Point<U>&& other) noexcept
         : x(static_cast<Ty>(other.x)), y(static_cast<Ty>(other.y))
     {}
 
-    Point& operator =(Point&& other)
+    constexpr Point& operator =(Point&& other) noexcept
     {
         if(&other != this)
         {
-            x = std::move(other.x);
-            y = std::move(other.y);
+            x = other.x;
+            y = other.y;
         }
         return *this;
     }
 
     template<typename U>
-    Point& operator =(Point<U>&& other)
+    constexpr Point& operator =(Point<U>&& other) noexcept
     {
         if(&other != this)
         {
@@ -89,17 +87,15 @@ struct Point
         return *this;
     }
 
-    // operator op
-    bool operator ==(const Point& other) const
+    constexpr bool operator ==(const Point& other) const noexcept
     {
         return (x == other.x) && (y == other.y);
     }
 
-    bool operator !=(const Point& other) const
+    constexpr bool operator !=(const Point& other) const noexcept
     {
         return (x != other.x) || (y != other.y);
     }
-
 };
 
 using PointI = Point<int>;

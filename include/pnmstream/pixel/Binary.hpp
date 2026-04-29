@@ -13,29 +13,29 @@ struct Binary
 {
     uint8_t c;
 
-    Binary()
+    constexpr Binary() noexcept
         : c(0)
     { }
 
-    Binary(uint8_t value)
+    constexpr Binary(uint8_t value) noexcept
         : c(value ? 1 : 0)
     { }
 
-    Binary(const Binary& other)
+    constexpr Binary(const Binary& other) noexcept
         : c(other.c)
     { }
 
-    Binary& operator =(const Binary& other)
+    constexpr Binary& operator =(const Binary& other) noexcept
     {
         c = other.c;
         return *this;
     }
 
-    Binary(Binary&& other)
+    constexpr Binary(Binary&& other) noexcept
         : c(other.c)
     { }
 
-    Binary& operator =(Binary&& other)
+    constexpr Binary& operator =(Binary&& other) noexcept
     {
         if(&other != this)
         {
@@ -46,15 +46,15 @@ struct Binary
 
     ~Binary() = default;
 
-    Binary(RGB rgb) { c = rgb.to_int() ? 1 : 0; }
-    Binary(RGBA rgba) { c = rgba.to_int() ? 1 : 0; }
-    Binary(Grayscale gray) { c = gray.g == gray.black().g ? 1 : 0; }
+    constexpr Binary(RGB rgb) noexcept : c(rgb.to_int() ? 1 : 0) {}
+    constexpr Binary(RGBA rgba) noexcept : c(rgba.to_int() ? 1 : 0) {}
+    constexpr Binary(Grayscale gray) noexcept : c(gray.g == gray.black().g ? 1 : 0) {}
 
-    static Binary white() { return Binary{0}; }
-    static Binary black() { return Binary{1}; }
+    constexpr static Binary white() noexcept { return Binary{0}; }
+    constexpr static Binary black() noexcept { return Binary{1}; }
 
-    bool is_white() const { return c == 0; }
-    bool is_black() const { return c != 0; }
+    constexpr bool is_white() const noexcept { return c == 0; }
+    constexpr bool is_black() const noexcept { return c != 0; }
 };
 
 } // namespace pnmstream
