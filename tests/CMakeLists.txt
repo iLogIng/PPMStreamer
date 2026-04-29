@@ -2,6 +2,8 @@ find_package(GTest REQUIRED)
 
 add_executable(test_pnmstream
     test_Math.cpp
+    test_Pixel.cpp
+    test_PNMStream.cpp
 )
 
 target_link_libraries(test_pnmstream PRIVATE pnmstream GTest::GTest GTest::Main)
