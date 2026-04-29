@@ -1,11 +1,11 @@
-CXX = g++
-CXXSTD = -std=c++17
-CXXFLAGS = -Wall -Wextra -g $(CXXSTD)
+CXX := g++
+CXXSTD := -std=c++17
+CXXFLAGS := -Wall -Wextra -g $(CXXSTD)
 
-INCLUDE_DIR = ../include
-SRC_DIR = ../src/stream
+INCLUDE_DIR := ../include
+SRC_DIR := ../src/stream
 
-SRCS = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/buffer/*.cpp)
+SRCS := $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/buffer/*.cpp)
 
 demo: demo.cpp $(SRCS)
 	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) $^ -o $@

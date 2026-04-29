@@ -28,7 +28,7 @@ const std::filesystem::path output_video_dir = outputs_dir / "output-video";
 
 int main()
 {
-    // chess_board();
+    chess_board();
     // shader_test();
     // multi_thread_shader_test();
     // pure_dark_red();
@@ -36,7 +36,7 @@ int main()
     // rhombus();
 
     // gray_graph();
-    binary_map();
+    // binary_map();
 
     return 0;
 }
