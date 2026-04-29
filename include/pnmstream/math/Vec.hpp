@@ -33,20 +33,23 @@ private:
 
 public:
     // constructor
-    Vector()
+    constexpr Vector() noexcept
         : data_{} {}
 
-    explicit Vector(data_type value)
+    constexpr explicit Vector(data_type value) noexcept
     {
-        data_.fill(value);
+        for(size_t i = 0; i < N; ++i)
+        {
+            data_[i] = value;
+        }
     }
 
     template<typename... Args, typename  = std::enable_if_t<sizeof...(Args) == N>>
-    Vector(Args&&... args)
+    constexpr Vector(Args&&... args) noexcept
         : data_{static_cast<data_type>(std::forward<Args>(args))...} {}
 
     template<typename OtherType, size_t OtherN>
-    Vector(const Vector<OtherType, OtherN>& other, data_type fillvalue = data_type{})
+    constexpr Vector(const Vector<OtherType, OtherN>& other, data_type fillvalue = data_type{}) noexcept
     {
         constexpr size_t min_size = (N < OtherN) ? N : OtherN;
 
@@ -62,25 +65,31 @@ public:
     }
 
     // copy constructor
-    Vector(const Vector& other)
+    constexpr Vector(const Vector& other) noexcept
     {
-        std::copy(other.data_.begin(), other.data_.end(), data_.begin());
+        for(size_t i = 0; i < N; ++i)
+        {
+            data_[i] = other[i];
+        }
     }
 
-    Vector& operator =(const Vector& other)
+    constexpr Vector& operator =(const Vector& other) noexcept
     {
         if(&other != this)
         {
-            std::copy(other.data_.begin(), other.data_.end(), data_.begin());
+            for(size_t i = 0; i < N; ++i)
+            {
+                data_[i] = other[i];
+            }
         }
         return *this;
     }
 
     // move constructor
-    Vector(Vector&& other)
+    constexpr Vector(Vector&& other) noexcept
         : data_(std::move(other.data_)) {}
 
-    Vector& operator =(Vector&& other)
+    constexpr Vector& operator =(Vector&& other) noexcept
     {
         if(&other != this)
         {
@@ -93,12 +102,12 @@ public:
 
 public:
 
-    data_type& operator [](size_t idx)
+    constexpr data_type& operator [](size_t idx) noexcept
     {
         return data_[idx];
     }
 
-    const data_type& operator [](size_t idx) const
+    constexpr const data_type& operator [](size_t idx) const noexcept
     {
         return data_[idx];
     }
@@ -106,60 +115,60 @@ public:
 public:
     // x
     template<size_t M = N>
-    std::enable_if_t<M >= 1, data_type&> x()
+    constexpr std::enable_if_t<M >= 1, data_type&> x() noexcept
     {
         return data_[0];
     }
     template<size_t M = N>
-    std::enable_if_t<M >= 1, const data_type&> x() const
+    constexpr std::enable_if_t<M >= 1, const data_type&> x() const noexcept
     {
         return data_[0];
     }
 
     // y
     template<size_t M = N>
-    std::enable_if_t<M >= 2, data_type&> y()
+    constexpr std::enable_if_t<M >= 2, data_type&> y() noexcept
     {
         return data_[1];
     }
     template<size_t M = N>
-    std::enable_if_t<M >= 2, const data_type&> y() const
+    constexpr std::enable_if_t<M >= 2, const data_type&> y() const noexcept
     {
         return data_[1];
     }
 
     // z
     template<size_t M = N>
-    std::enable_if_t<M >= 3, data_type&> z()
+    constexpr std::enable_if_t<M >= 3, data_type&> z() noexcept
     {
         return data_[2];
     }
     template<size_t M = N>
-    std::enable_if_t<M >= 3, const data_type&> z() const
+    constexpr std::enable_if_t<M >= 3, const data_type&> z() const noexcept
     {
         return data_[2];
     }
 
     // w
     template<size_t M = N>
-    std::enable_if_t<M >= 4, data_type&> w()
+    constexpr std::enable_if_t<M >= 4, data_type&> w() noexcept
     {
         return data_[3];
     }
     template<size_t M = N>
-    std::enable_if_t<M >= 4, const data_type&> w() const
+    constexpr std::enable_if_t<M >= 4, const data_type&> w() const noexcept
     {
         return data_[3];
     }
 
     template<size_t M = N>
-    std::enable_if_t<M >= 2, Vector<data_type, 2>> yx() const
+    constexpr std::enable_if_t<M >= 2, Vector<data_type, 2>> yx() const noexcept
     {
         return vec2(this->y(), this->x());
     }
 
     template<size_t M = N>
-    std::enable_if_t<M >= 2, Vector<data_type, 4>> xyyx() const
+    constexpr std::enable_if_t<M >= 2, Vector<data_type, 4>> xyyx() const noexcept
     {
         return vec4(this->x(), this->y(), this->y(), this->x());
     }
@@ -167,7 +176,7 @@ public:
 public:
 
     // +
-    Vector operator +(const Vector& other) const
+    constexpr Vector operator +(const Vector& other) const noexcept
     {
         Vector result;
         for(size_t i = 0; i < N; ++i)
@@ -176,7 +185,7 @@ public:
         }
         return result;
     }
-    Vector operator +(const data_type& value) const
+    constexpr Vector operator +(const data_type& value) const noexcept
     {
         Vector result;
         for(size_t i = 0; i < N; ++i)
@@ -186,7 +195,7 @@ public:
         return result;
     }
     // -
-    Vector operator -(const Vector& other) const
+    constexpr Vector operator -(const Vector& other) const noexcept
     {
         Vector result;
         for(size_t i = 0; i < N; ++i)
@@ -195,7 +204,7 @@ public:
         }
         return result;
     }
-    Vector operator -(const data_type& value) const
+    constexpr Vector operator -(const data_type& value) const noexcept
     {
         Vector result;
         for(size_t i = 0; i < N; ++i)
@@ -205,7 +214,7 @@ public:
         return result;
     }
     // *
-    Vector operator *(const Vector& other) const
+    constexpr Vector operator *(const Vector& other) const noexcept
     {
         Vector result;
         for(size_t i = 0; i < N; ++i)
@@ -214,7 +223,7 @@ public:
         }
         return result;
     }
-    Vector operator *(const data_type& value) const
+    constexpr Vector operator *(const data_type& value) const noexcept
     {
         Vector result;
         for(size_t i = 0; i < N; ++i)
@@ -224,7 +233,7 @@ public:
         return result;
     }
     // /
-    Vector operator /(const data_type& value) const
+    constexpr Vector operator /(const data_type& value) const noexcept
     {
         Vector result;
         for(size_t i = 0; i < N; ++i)
@@ -233,7 +242,7 @@ public:
         }
         return result;
     }
-    Vector operator /(const Vector& other) const
+    constexpr Vector operator /(const Vector& other) const noexcept
     {
         Vector result;
         for(size_t i = 0; i < N; ++i)
@@ -243,18 +252,32 @@ public:
         return result;
     }
 
+    constexpr bool operator ==(const Vector& other) const noexcept
+    {
+        for(size_t i = 0; i < N; ++i)
+        {
+            if(data_[i] != other[i]) return false;
+        }
+        return true;
+    }
+
+    constexpr bool operator !=(const Vector& other) const noexcept
+    {
+        return !(*this == other);
+    }
+
     template<typename Ty, size_t M>
-    friend Vector<Ty, M> operator +(const Ty value, const Vector<Ty, M>& vec);
+    friend constexpr Vector<Ty, M> operator +(const Ty value, const Vector<Ty, M>& vec) noexcept;
     template<typename Ty, size_t M>
-    friend Vector<Ty, M> operator -(const Ty value, const Vector<Ty, M>& vec);
+    friend constexpr Vector<Ty, M> operator -(const Ty value, const Vector<Ty, M>& vec) noexcept;
     template<typename Ty, size_t M>
-    friend Vector<Ty, M> operator *(const Ty value, const Vector<Ty, M>& vec);
+    friend constexpr Vector<Ty, M> operator *(const Ty value, const Vector<Ty, M>& vec) noexcept;
     template<typename Ty, size_t M>
-    friend Vector<Ty, M> operator /(const Ty value, const Vector<Ty, M>& vec);
+    friend constexpr Vector<Ty, M> operator /(const Ty value, const Vector<Ty, M>& vec) noexcept;
 
 
     // +=
-    Vector& operator +=(const Vector& other)
+    constexpr Vector& operator +=(const Vector& other) noexcept
     {
         for(size_t i = 0; i < N; ++i)
         {
@@ -262,7 +285,7 @@ public:
         }
         return *this;
     }
-    Vector& operator +=(const data_type& value)
+    constexpr Vector& operator +=(const data_type& value) noexcept
     {
         for(size_t i = 0; i < N; ++i)
         {
@@ -271,7 +294,7 @@ public:
         return *this;
     }
     // -=
-    Vector& operator -=(const Vector& other)
+    constexpr Vector& operator -=(const Vector& other) noexcept
     {
         for(size_t i = 0; i < N; ++i)
         {
@@ -279,7 +302,7 @@ public:
         }
         return *this;
     }
-    Vector& operator -=(const data_type& value)
+    constexpr Vector& operator -=(const data_type& value) noexcept
     {
         for(size_t i = 0; i < N; ++i)
         {
@@ -288,7 +311,7 @@ public:
         return *this;
     }
     // *=
-    Vector& operator *=(const Vector& other)
+    constexpr Vector& operator *=(const Vector& other) noexcept
     {
         for(size_t i = 0; i < N; ++i)
         {
@@ -296,7 +319,7 @@ public:
         }
         return *this;
     }
-    Vector& operator *=(const data_type& value)
+    constexpr Vector& operator *=(const data_type& value) noexcept
     {
         for(size_t i = 0; i < N; ++i)
         {
@@ -305,7 +328,7 @@ public:
         return *this;
     }
     // /=
-    Vector& operator /=(const Vector& other)
+    constexpr Vector& operator /=(const Vector& other) noexcept
     {
         for(size_t i = 0; i < N; ++i)
         {
@@ -313,7 +336,7 @@ public:
         }
         return *this;
     }
-    Vector& operator /=(const data_type& value)
+    constexpr Vector& operator /=(const data_type& value) noexcept
     {
         for(size_t i = 0; i < N; ++i)
         {
@@ -323,18 +346,18 @@ public:
     }
 
     template<typename Ty, size_t M>
-    friend Vector<Ty, M>& operator +=(const Ty value, Vector<Ty, M>& vec);
+    friend constexpr Vector<Ty, M>& operator +=(const Ty value, Vector<Ty, M>& vec) noexcept;
     template<typename Ty, size_t M>
-    friend Vector<Ty, M>& operator -=(const Ty value, Vector<Ty, M>& vec);
+    friend constexpr Vector<Ty, M>& operator -=(const Ty value, Vector<Ty, M>& vec) noexcept;
     template<typename Ty, size_t M>
-    friend Vector<Ty, M>& operator *=(const Ty value, Vector<Ty, M>& vec);
+    friend constexpr Vector<Ty, M>& operator *=(const Ty value, Vector<Ty, M>& vec) noexcept;
     template<typename Ty, size_t M>
-    friend Vector<Ty, M>& operator /=(const Ty value, Vector<Ty, M>& vec);
+    friend constexpr Vector<Ty, M>& operator /=(const Ty value, Vector<Ty, M>& vec) noexcept;
 
 public:
 
     // vector length
-    auto length() const -> decltype(std::sqrt(static_cast<data_type>(data_type{})))
+    auto length() const noexcept -> decltype(std::sqrt(static_cast<data_type>(data_type{})))
     {
         data_type sum = {};
         for(size_t i = 0; i < N; ++i)
@@ -345,7 +368,7 @@ public:
     }
 
     // normalize
-    Vector<data_type, N> normalize() const
+    Vector<data_type, N> normalize() const noexcept
     {
         Vector<data_type, N> result;
         for(size_t i = 0; i < N; ++i)
@@ -361,7 +384,7 @@ public:
 
 // friend
 template<typename Ty, size_t M>
-Vector<Ty, M> operator +(const Ty value, const Vector<Ty, M>& vec)
+constexpr Vector<Ty, M> operator +(const Ty value, const Vector<Ty, M>& vec) noexcept
 {
     Vector<Ty, M> result;
     for(size_t i = 0; i < M; ++i)
@@ -371,7 +394,7 @@ Vector<Ty, M> operator +(const Ty value, const Vector<Ty, M>& vec)
     return result;
 }
 template<typename Ty, size_t M>
-Vector<Ty, M> operator -(const Ty value, const Vector<Ty, M>& vec)
+constexpr Vector<Ty, M> operator -(const Ty value, const Vector<Ty, M>& vec) noexcept
 {
     Vector<Ty, M> result;
     for(size_t i = 0; i < M; ++i)
@@ -381,7 +404,7 @@ Vector<Ty, M> operator -(const Ty value, const Vector<Ty, M>& vec)
     return result;
 }
 template<typename Ty, size_t M>
-Vector<Ty, M> operator *(const Ty value, const Vector<Ty, M>& vec)
+constexpr Vector<Ty, M> operator *(const Ty value, const Vector<Ty, M>& vec) noexcept
 {
     Vector<Ty, M> result;
     for(size_t i = 0; i < M; ++i)
@@ -391,7 +414,7 @@ Vector<Ty, M> operator *(const Ty value, const Vector<Ty, M>& vec)
     return result;
 }
 template<typename Ty, size_t M>
-Vector<Ty, M> operator /(const Ty value, const Vector<Ty, M>& vec)
+constexpr Vector<Ty, M> operator /(const Ty value, const Vector<Ty, M>& vec) noexcept
 {
     Vector<Ty, M> result;
     for(size_t i = 0; i < M; ++i)
@@ -403,7 +426,7 @@ Vector<Ty, M> operator /(const Ty value, const Vector<Ty, M>& vec)
 
 // friend
 template<typename Ty, size_t M>
-Vector<Ty, M>& operator +=(const Ty value, Vector<Ty, M>& vec)
+constexpr Vector<Ty, M>& operator +=(const Ty value, Vector<Ty, M>& vec) noexcept
 {
     for(size_t i = 0; i < M; ++i)
     {
@@ -412,7 +435,7 @@ Vector<Ty, M>& operator +=(const Ty value, Vector<Ty, M>& vec)
     return vec;
 }
 template<typename Ty, size_t M>
-Vector<Ty, M>& operator -=(const Ty value, Vector<Ty, M>& vec)
+constexpr Vector<Ty, M>& operator -=(const Ty value, Vector<Ty, M>& vec) noexcept
 {
     for(size_t i = 0; i < M; ++i)
     {
@@ -421,7 +444,7 @@ Vector<Ty, M>& operator -=(const Ty value, Vector<Ty, M>& vec)
     return vec;
 }
 template<typename Ty, size_t M>
-Vector<Ty, M>& operator *=(const Ty value, Vector<Ty, M>& vec)
+constexpr Vector<Ty, M>& operator *=(const Ty value, Vector<Ty, M>& vec) noexcept
 {
     for(size_t i = 0; i < M; ++i)
     {
@@ -430,7 +453,7 @@ Vector<Ty, M>& operator *=(const Ty value, Vector<Ty, M>& vec)
     return vec;
 }
 template<typename Ty, size_t M>
-Vector<Ty, M>& operator /=(const Ty value, Vector<Ty, M>& vec)
+constexpr Vector<Ty, M>& operator /=(const Ty value, Vector<Ty, M>& vec) noexcept
 {
     for(size_t i = 0; i < M; ++i)
     {
@@ -444,8 +467,8 @@ Vector<Ty, M>& operator /=(const Ty value, Vector<Ty, M>& vec)
 
 // dot production
 template<typename data_type, size_t N>
-data_type
-dot(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
+constexpr data_type
+dot(const Vector<data_type, N>& a, const Vector<data_type, N>& b) noexcept
 {
     data_type result = {};
     for(size_t i = 0; i < N; ++i)
@@ -457,8 +480,8 @@ dot(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
 
 // outer
 template<typename data_type, size_t N>
-pnmstream::Matrix<data_type, N>
-outer(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
+constexpr pnmstream::Matrix<data_type, N>
+outer(const Vector<data_type, N>& a, const Vector<data_type, N>& b) noexcept
 {
     Matrix<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -473,14 +496,14 @@ outer(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
 
 // 2D cross
 template<typename data_type>
-data_type cross(const Vector<data_type, 2>& a, const Vector<data_type, 2>& b)
+constexpr data_type cross(const Vector<data_type, 2>& a, const Vector<data_type, 2>& b) noexcept
 {
     return a.x() * b.y() - a.y() * b.x();
 }
 
 // 3D cross
 template<typename data_type>
-Vector<data_type, 3> cross(const Vector<data_type, 3>& a, const Vector<data_type, 3>& b)
+constexpr Vector<data_type, 3> cross(const Vector<data_type, 3>& a, const Vector<data_type, 3>& b) noexcept
 {
     return Vector<data_type, 3>(
         a.y() * b.z() - a.z() * b.y(),
@@ -491,7 +514,7 @@ Vector<data_type, 3> cross(const Vector<data_type, 3>& a, const Vector<data_type
 
 // static assert prohibit other dimension vector cross
 template<typename data_type, size_t N>
-Vector<data_type, N> cross(const Vector<data_type, N>& a, const Vector<data_type, N>& b)
+Vector<data_type, N> cross(const Vector<data_type, N>& a, const Vector<data_type, N>& b) noexcept
 {
     static_assert(N == 2 || N == 3,
         "Cross product is only defined for 2D and 3D vectors");
@@ -500,8 +523,8 @@ Vector<data_type, N> cross(const Vector<data_type, N>& a, const Vector<data_type
 
 // length squared
 template<typename data_type, size_t N>
-data_type
-length_squared(const Vector<data_type,N>& vec)
+constexpr data_type
+length_squared(const Vector<data_type,N>& vec) noexcept
 {
     data_type sum = {0};
     for(size_t i = 0; i < N; ++i)
@@ -514,7 +537,7 @@ length_squared(const Vector<data_type,N>& vec)
 // length
 template<typename data_type, size_t N>
 auto
-length(const Vector<data_type, N>& vec) -> decltype(std::sqrt(data_type{}))
+length(const Vector<data_type, N>& vec) noexcept -> decltype(std::sqrt(data_type{}))
 {
     return std::sqrt(length_squared(vec));
 }
@@ -522,7 +545,7 @@ length(const Vector<data_type, N>& vec) -> decltype(std::sqrt(data_type{}))
 // normalize
 template<typename data_type, size_t N>
 Vector<data_type, N>
-normalize(const Vector<data_type, N>& vec)
+normalize(const Vector<data_type, N>& vec) noexcept
 {
     auto veclength = length(vec);
     if(veclength > data_type{0})
@@ -535,7 +558,7 @@ normalize(const Vector<data_type, N>& vec)
 // abs
 template<typename data_type, size_t N>
 Vector<data_type, N>
-abs(const Vector<data_type, N>& vec)
+abs(const Vector<data_type, N>& vec) noexcept
 {
     Vector<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -548,7 +571,7 @@ abs(const Vector<data_type, N>& vec)
 // sin
 template<typename data_type, size_t N>
 Vector<data_type, N>
-sin(const Vector<data_type, N>& vec)
+sin(const Vector<data_type, N>& vec) noexcept
 {
     Vector<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -561,7 +584,7 @@ sin(const Vector<data_type, N>& vec)
 // cos
 template<typename data_type, size_t N>
 Vector<data_type, N>
-cos(const Vector<data_type, N>& vec)
+cos(const Vector<data_type, N>& vec) noexcept
 {
     Vector<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -574,7 +597,7 @@ cos(const Vector<data_type, N>& vec)
 // tanh
 template<typename data_type, size_t N>
 Vector<data_type, N>
-tanh(const Vector<data_type, N>& vec)
+tanh(const Vector<data_type, N>& vec) noexcept
 {
     Vector<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -587,7 +610,7 @@ tanh(const Vector<data_type, N>& vec)
 // exp
 template<typename data_type, size_t N>
 Vector<data_type, N>
-exp(const Vector<data_type, N>& vec)
+exp(const Vector<data_type, N>& vec) noexcept
 {
     Vector<data_type, N> result;
     for(size_t i = 0; i < N; ++i)

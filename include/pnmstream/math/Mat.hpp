@@ -10,13 +10,6 @@
 namespace pnmstream
 {
 
-/**
- * + - * dot cross
- * common & matrix
- * vector & matrix
- * matrix & matrix
- */
-
 template <typename Type, size_t N>
 class Matrix
 {
@@ -27,12 +20,15 @@ private:
 
 public:
     // constructor
-    Matrix()
+    constexpr Matrix() noexcept
         : data_{} {}
 
-    explicit Matrix(const data_type& value)
+    constexpr explicit Matrix(const data_type& value) noexcept
     {
-        data_.fill(value);
+        for(size_t i = 0; i < N * N; ++i)
+        {
+            data_[i] = value;
+        }
     }
 
     Matrix(std::initializer_list<data_type> init_list)
@@ -42,30 +38,43 @@ public:
             throw std::runtime_error("initializer list out of range of N * N");
         }
 
-        std::copy(init_list.begin(), init_list.end(), this->data_.begin());
-        std::fill(data_.begin() + init_list.size(), data_.end(), data_type{0});
+        auto it = init_list.begin();
+        for(size_t i = 0; i < init_list.size(); ++i, ++it)
+        {
+            data_[i] = *it;
+        }
+        for(size_t i = init_list.size(); i < N * N; ++i)
+        {
+            data_[i] = data_type{0};
+        }
     }
 
     // copy constructor
-    Matrix(const Matrix& other)
+    constexpr Matrix(const Matrix& other) noexcept
     {
-        std::copy(other.data_.begin(), other.data_.end(), this->data_.begin());
+        for(size_t i = 0; i < N * N; ++i)
+        {
+            data_[i] = other.data_[i];
+        }
     }
 
-    Matrix& operator =(const Matrix& other)
+    constexpr Matrix& operator =(const Matrix& other) noexcept
     {
         if(&other != this)
         {
-            std::copy(other.data_.begin(), other.data_.end(), data_.begin());
+            for(size_t i = 0; i < N * N; ++i)
+            {
+                data_[i] = other.data_[i];
+            }
         }
         return *this;
     }
 
     // move constructor
-    Matrix(Matrix&& other)
+    constexpr Matrix(Matrix&& other) noexcept
         : data_(std::move(other.data_)) {}
 
-    Matrix& operator =(Matrix&& other)
+    constexpr Matrix& operator =(Matrix&& other) noexcept
     {
         if(&other != this)
         {
@@ -101,60 +110,74 @@ public:
 
     // operator +
     Matrix<data_type, N>
-    operator +(const Matrix& other) const;
+    operator +(const Matrix& other) const noexcept;
     // operator +
     Matrix<data_type, N>
-    operator +(const data_type& a) const;
+    operator +(const data_type& a) const noexcept;
     // operator -
     Matrix<data_type, N>
-    operator -(const Matrix& other) const;
+    operator -(const Matrix& other) const noexcept;
     // operator -
     Matrix<data_type, N>
-    operator -(const data_type& a) const;
+    operator -(const data_type& a) const noexcept;
     // operator *
     Matrix<data_type, N>
-    operator *(const Matrix& other) const;
+    operator *(const Matrix& other) const noexcept;
     // operator *
     Matrix<data_type, N>
-    operator *(const data_type& a) const;
+    operator *(const data_type& a) const noexcept;
+
+    constexpr bool operator ==(const Matrix& other) const noexcept
+    {
+        for(size_t i = 0; i < N * N; ++i)
+        {
+            if(data_[i] != other.data_[i]) return false;
+        }
+        return true;
+    }
+
+    constexpr bool operator !=(const Matrix& other) const noexcept
+    {
+        return !(*this == other);
+    }
 
     template<typename Ty, size_t M>
-    friend Matrix<Ty, M> operator +(const Ty& a, const Matrix<Ty, M>& mat);
+    friend Matrix<Ty, M> operator +(const Ty& a, const Matrix<Ty, M>& mat) noexcept;
     template<typename Ty, size_t M>
-    friend Matrix<Ty, M> operator -(const Ty& a, const Matrix<Ty, M>& mat);
+    friend Matrix<Ty, M> operator -(const Ty& a, const Matrix<Ty, M>& mat) noexcept;
     template<typename Ty, size_t M>
-    friend Matrix<Ty, M> operator *(const Ty& a, const Matrix<Ty, M>& mat);
-    
+    friend Matrix<Ty, M> operator *(const Ty& a, const Matrix<Ty, M>& mat) noexcept;
+
     // operator +=
     Matrix<data_type, N>&
-    operator +=(const Matrix& other);
+    operator +=(const Matrix& other) noexcept;
     // operator +=
     Matrix<data_type, N>&
-    operator +=(const data_type& a);
+    operator +=(const data_type& a) noexcept;
     // operator -=
     Matrix<data_type, N>&
-    operator -=(const Matrix& other);
+    operator -=(const Matrix& other) noexcept;
     // operator -=
     Matrix<data_type, N>&
-    operator -=(const data_type& a);
+    operator -=(const data_type& a) noexcept;
     // operator *=
     Matrix<data_type, N>&
-    operator *=(const Matrix& other);
+    operator *=(const Matrix& other) noexcept;
     // operator *=
     Matrix<data_type, N>&
-    operator *=(const data_type& a);
+    operator *=(const data_type& a) noexcept;
 
     template<typename Ty, size_t M>
-    friend Matrix<Ty, M>& operator +=(const Ty& a, Matrix<Ty, M>& mat);
+    friend Matrix<Ty, M>& operator +=(const Ty& a, Matrix<Ty, M>& mat) noexcept;
     template<typename Ty, size_t M>
-    friend Matrix<Ty, M>& operator -=(const Ty& a, Matrix<Ty, M>& mat);
+    friend Matrix<Ty, M>& operator -=(const Ty& a, Matrix<Ty, M>& mat) noexcept;
     template<typename Ty, size_t M>
-    friend Matrix<Ty, M>& operator *=(const Ty& a, Matrix<Ty, M>& mat);
+    friend Matrix<Ty, M>& operator *=(const Ty& a, Matrix<Ty, M>& mat) noexcept;
 
 public:
 
     // identity
-    static Matrix identity()
+    static Matrix identity() noexcept
     {
         Matrix mat(data_type{0});
         for(size_t i = 0; i < N; ++i)
@@ -165,7 +188,7 @@ public:
     }
 
     // transpose
-    Matrix transpose() const
+    Matrix transpose() const noexcept
     {
         Matrix mat;
         for(size_t i = 0; i < N; ++i)
@@ -184,7 +207,7 @@ public:
 
 template<typename data_type, size_t N>
 Matrix<data_type, N>
-Matrix<data_type, N>::operator +(const Matrix<data_type, N>& other) const 
+Matrix<data_type, N>::operator +(const Matrix<data_type, N>& other) const noexcept
 {
     Matrix<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -198,7 +221,7 @@ Matrix<data_type, N>::operator +(const Matrix<data_type, N>& other) const
 }
 template<typename data_type, size_t N>
 Matrix<data_type, N>
-Matrix<data_type, N>::operator +(const data_type& a) const 
+Matrix<data_type, N>::operator +(const data_type& a) const noexcept
 {
     Matrix<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -213,7 +236,7 @@ Matrix<data_type, N>::operator +(const data_type& a) const
 
 template<typename data_type, size_t N>
 Matrix<data_type, N>
-Matrix<data_type, N>::operator -(const Matrix<data_type, N>& other) const 
+Matrix<data_type, N>::operator -(const Matrix<data_type, N>& other) const noexcept
 {
     Matrix<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -227,7 +250,7 @@ Matrix<data_type, N>::operator -(const Matrix<data_type, N>& other) const
 }
 template<typename data_type, size_t N>
 Matrix<data_type, N>
-Matrix<data_type, N>::operator -(const data_type& a) const 
+Matrix<data_type, N>::operator -(const data_type& a) const noexcept
 {
     Matrix<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -242,7 +265,7 @@ Matrix<data_type, N>::operator -(const data_type& a) const
 
 template<typename data_type, size_t N>
 Matrix<data_type, N>
-Matrix<data_type, N>::operator *(const Matrix<data_type, N>& other) const 
+Matrix<data_type, N>::operator *(const Matrix<data_type, N>& other) const noexcept
 {
     Matrix<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -257,8 +280,9 @@ Matrix<data_type, N>::operator *(const Matrix<data_type, N>& other) const
     }
     return result;
 }
-template<typename data_type, size_t N>Matrix<data_type, N>
-Matrix<data_type, N>::operator *(const data_type& a) const 
+template<typename data_type, size_t N>
+Matrix<data_type, N>
+Matrix<data_type, N>::operator *(const data_type& a) const noexcept
 {
     Matrix<data_type, N> result;
     for(size_t i = 0; i < N; ++i)
@@ -273,7 +297,7 @@ Matrix<data_type, N>::operator *(const data_type& a) const
 
 // friend
 template<typename Ty, size_t M>
-Matrix<Ty, M> operator +(const Ty& a, const Matrix<Ty, M>& mat)
+Matrix<Ty, M> operator +(const Ty& a, const Matrix<Ty, M>& mat) noexcept
 {
     Matrix<Ty, M> result;
     for(size_t i = 0; i < M; ++i)
@@ -286,7 +310,7 @@ Matrix<Ty, M> operator +(const Ty& a, const Matrix<Ty, M>& mat)
     return result;
 }
 template<typename Ty, size_t M>
-Matrix<Ty, M> operator -(const Ty& a, const Matrix<Ty, M>& mat)
+Matrix<Ty, M> operator -(const Ty& a, const Matrix<Ty, M>& mat) noexcept
 {
     Matrix<Ty, M> result;
     for(size_t i = 0; i < M; ++i)
@@ -299,7 +323,7 @@ Matrix<Ty, M> operator -(const Ty& a, const Matrix<Ty, M>& mat)
     return result;
 }
 template<typename Ty, size_t M>
-Matrix<Ty, M> operator *(const Ty& a, const Matrix<Ty, M>& mat)
+Matrix<Ty, M> operator *(const Ty& a, const Matrix<Ty, M>& mat) noexcept
 {
     Matrix<Ty, M> result;
     for(size_t i = 0; i < M; ++i)
@@ -314,7 +338,7 @@ Matrix<Ty, M> operator *(const Ty& a, const Matrix<Ty, M>& mat)
 
 template<typename data_type, size_t N>
 Matrix<data_type, N>&
-Matrix<data_type, N>::operator +=(const Matrix<data_type, N>& other)
+Matrix<data_type, N>::operator +=(const Matrix<data_type, N>& other) noexcept
 {
     for(size_t i = 0; i < N; ++i)
     {
@@ -327,7 +351,7 @@ Matrix<data_type, N>::operator +=(const Matrix<data_type, N>& other)
 }
 template<typename data_type, size_t N>
 Matrix<data_type, N>&
-Matrix<data_type, N>::operator +=(const data_type& a)
+Matrix<data_type, N>::operator +=(const data_type& a) noexcept
 {
     for(size_t i = 0; i < N; ++i)
     {
@@ -341,7 +365,7 @@ Matrix<data_type, N>::operator +=(const data_type& a)
 
 template<typename data_type, size_t N>
 Matrix<data_type, N>&
-Matrix<data_type, N>::operator -=(const Matrix<data_type, N>& other)
+Matrix<data_type, N>::operator -=(const Matrix<data_type, N>& other) noexcept
 {
     for(size_t i = 0; i < N; ++i)
     {
@@ -354,7 +378,7 @@ Matrix<data_type, N>::operator -=(const Matrix<data_type, N>& other)
 }
 template<typename data_type, size_t N>
 Matrix<data_type, N>&
-Matrix<data_type, N>::operator -=(const data_type& a)
+Matrix<data_type, N>::operator -=(const data_type& a) noexcept
 {
     for(size_t i = 0; i < N; ++i)
     {
@@ -368,7 +392,7 @@ Matrix<data_type, N>::operator -=(const data_type& a)
 
 template<typename data_type, size_t N>
 Matrix<data_type, N>&
-Matrix<data_type, N>::operator *=(const Matrix<data_type, N>& other)
+Matrix<data_type, N>::operator *=(const Matrix<data_type, N>& other) noexcept
 {
     Matrix<data_type, N> tempmat;
     tempmat = (*this) * other;
@@ -377,7 +401,7 @@ Matrix<data_type, N>::operator *=(const Matrix<data_type, N>& other)
 }
 template<typename data_type, size_t N>
 Matrix<data_type, N>&
-Matrix<data_type, N>::operator *=(const data_type& a)
+Matrix<data_type, N>::operator *=(const data_type& a) noexcept
 {
     for(size_t i = 0; i < N; ++i)
     {
@@ -391,7 +415,7 @@ Matrix<data_type, N>::operator *=(const data_type& a)
 
 // friend
 template<typename Ty, size_t M>
-Matrix<Ty, M>& operator +=(const Ty& a, Matrix<Ty, M>& mat)
+Matrix<Ty, M>& operator +=(const Ty& a, Matrix<Ty, M>& mat) noexcept
 {
     for(size_t i = 0; i < M; ++i)
     {
@@ -403,7 +427,7 @@ Matrix<Ty, M>& operator +=(const Ty& a, Matrix<Ty, M>& mat)
     return mat;
 }
 template<typename Ty, size_t M>
-Matrix<Ty, M>& operator -=(const Ty& a, Matrix<Ty, M>& mat)
+Matrix<Ty, M>& operator -=(const Ty& a, Matrix<Ty, M>& mat) noexcept
 {
     for(size_t i = 0; i < M; ++i)
     {
@@ -415,7 +439,7 @@ Matrix<Ty, M>& operator -=(const Ty& a, Matrix<Ty, M>& mat)
     return mat;
 }
 template<typename Ty, size_t M>
-Matrix<Ty, M>& operator *=(const Ty& a, Matrix<Ty, M>& mat)
+Matrix<Ty, M>& operator *=(const Ty& a, Matrix<Ty, M>& mat) noexcept
 {
     for(size_t i = 0; i < M; ++i)
     {
