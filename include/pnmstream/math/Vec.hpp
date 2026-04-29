@@ -370,10 +370,11 @@ public:
     // normalize
     Vector<data_type, N> normalize() const noexcept
     {
+        const auto len = length();
         Vector<data_type, N> result;
         for(size_t i = 0; i < N; ++i)
         {
-            result[i] = data_[i] / length();
+            result[i] = data_[i] / len;
         }
         return result;
     }
