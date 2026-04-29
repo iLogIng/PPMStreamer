@@ -33,8 +33,8 @@ public:
 public:
     size_t width() const noexcept override;
     size_t height() const noexcept override;
-    size_t size() const override;
-    size_t bytes() const override;
+    size_t size() const noexcept override;
+    size_t bytes() const noexcept override;
     const color_type* data() const noexcept override;
     color_type* data() noexcept override;
     buffer_type& buffer() noexcept override;
@@ -47,15 +47,15 @@ private:
 
 #pragma region Buffer Index
 public:
-    color_type& operator ()(size_t x, size_t y) override;
-    const color_type& operator ()(size_t x, size_t y) const override;
+    color_type& operator ()(size_t x, size_t y) noexcept override;
+    const color_type& operator ()(size_t x, size_t y) const noexcept override;
     color_type& at(size_t x, size_t y) override;
     const color_type& at(size_t x, size_t y) const override;
-    color_type& operator [](size_t n) override;
-    const color_type& operator [](size_t n) const override;
+    color_type& operator [](size_t n) noexcept override;
+    const color_type& operator [](size_t n) const noexcept override;
 #pragma endregion
 public:
-    void clear() override;
+    void clear() noexcept override;
 
 };
 

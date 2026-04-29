@@ -120,11 +120,11 @@ public:
     // 关闭文件流，自动保存
     void close();
 
-    PNMBuffer<color_type>& buffer();
-    const PNMBuffer<color_type>& buffer() const;
+    PNMBuffer<color_type>& buffer() noexcept;
+    const PNMBuffer<color_type>& buffer() const noexcept;
 
-    bool is_open() const;
-    bool eof() const;
+    bool is_open() const noexcept;
+    bool eof() const noexcept;
 };
 
 // = = = = = = = =
@@ -364,7 +364,7 @@ close()
 template<typename BufferT>
 PNMBuffer<typename BufferT::color_type>&
 PNMStream<BufferT>::
-buffer()
+buffer() noexcept
 {
     return buffer_;
 }
@@ -372,7 +372,7 @@ buffer()
 template<typename BufferT>
 const PNMBuffer<typename BufferT::color_type>&
 PNMStream<BufferT>::
-buffer() const
+buffer() const noexcept
 {
     return buffer_;
 }
@@ -380,7 +380,7 @@ buffer() const
 template<typename BufferT>
 bool
 PNMStream<BufferT>::
-is_open() const
+is_open() const noexcept
 {
     return file_.is_open();
 }
@@ -388,7 +388,7 @@ is_open() const
 template<typename BufferT>
 bool
 PNMStream<BufferT>::
-eof() const
+eof() const noexcept
 {
     return file_.eof();
 }

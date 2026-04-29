@@ -19,7 +19,7 @@ private:
 #pragma region Construction
 public:
     // constructor
-    explicit PNMDrawer(PNMBuffer<color_type>& buffer);
+    explicit PNMDrawer(PNMBuffer<color_type>& buffer) noexcept;
 
     // deleted
     PNMDrawer() = delete;
@@ -34,37 +34,37 @@ public:
 #pragma region Drawing Operation
 public:
     // redraw the whole buffer
-    void redraw(color_type color);
+    void redraw(color_type color) noexcept;
 
     // draw pixel by (x, y)
-    void draw_point(PointI point, color_type color);
+    void draw_point(PointI point, color_type color) noexcept;
 
     // draw a line (Bresenham)
-    void draw_line(PointI p0, PointI p1, color_type color);
+    void draw_line(PointI p0, PointI p1, color_type color) noexcept;
 
     // draw a row segment
-    void draw_row(PointI p, size_t n, color_type color);
+    void draw_row(PointI p, size_t n, color_type color) noexcept;
 
     // draw a column segment
-    void draw_col(PointI p, size_t n, color_type color);
+    void draw_col(PointI p, size_t n, color_type color) noexcept;
 
     // fill rectangle
-    void fill_rectangle(PointI p, size_t w, size_t h, color_type color);
+    void fill_rectangle(PointI p, size_t w, size_t h, color_type color) noexcept;
 
 #pragma endregion
-
+    
 };
 
 template<typename color_type>
 pnmstream::PNMDrawer<color_type>::
-PNMDrawer(pnmstream::PNMBuffer<color_type>& buffer)
+PNMDrawer(pnmstream::PNMBuffer<color_type>& buffer) noexcept
     : buffer_(buffer)
 {}
 
 template<typename color_type>
 void
 pnmstream::PNMDrawer<color_type>::
-redraw(color_type color)
+redraw(color_type color) noexcept
 {
     for(size_t i = 0; i < buffer_.size(); ++i)
     {
@@ -75,7 +75,7 @@ redraw(color_type color)
 template<typename color_type>
 void
 pnmstream::PNMDrawer<color_type>::
-draw_point(PointI point, color_type color)
+draw_point(PointI point, color_type color) noexcept
 {
     if(point.x >= 0 && point.y >= 0
         && static_cast<size_t>(point.x) < buffer_.width()
@@ -88,7 +88,7 @@ draw_point(PointI point, color_type color)
 template<typename color_type>
 void
 pnmstream::PNMDrawer<color_type>::
-draw_line(PointI p0, PointI p1, color_type color)
+draw_line(PointI p0, PointI p1, color_type color) noexcept
 {
     int dx = std::abs(p1.x - p0.x);
     int dy = std::abs(p1.y - p0.y);
@@ -120,7 +120,7 @@ draw_line(PointI p0, PointI p1, color_type color)
 template<typename color_type>
 void
 pnmstream::PNMDrawer<color_type>::
-fill_rectangle(PointI p, size_t w, size_t h, color_type color)
+fill_rectangle(PointI p, size_t w, size_t h, color_type color) noexcept
 {
     size_t end_row = std::min(p.x + h, buffer_.height());
     size_t end_col = std::min(p.y + w, buffer_.width());
@@ -137,7 +137,7 @@ fill_rectangle(PointI p, size_t w, size_t h, color_type color)
 template<typename color_type>
 void
 pnmstream::PNMDrawer<color_type>::
-draw_row(PointI p, size_t n, color_type color)
+draw_row(PointI p, size_t n, color_type color) noexcept
 {
     size_t end_x = std::min(p.x + n, buffer_.width());
     for(; static_cast<size_t>(p.x) < end_x; ++p.x)
@@ -149,7 +149,7 @@ draw_row(PointI p, size_t n, color_type color)
 template<typename color_type>
 void
 pnmstream::PNMDrawer<color_type>::
-draw_col(PointI p, size_t n, color_type color)
+draw_col(PointI p, size_t n, color_type color) noexcept
 {
     size_t end_y = std::min(p.y + n, buffer_.height());
     for(; static_cast<size_t>(p.y) < end_y; ++p.y)

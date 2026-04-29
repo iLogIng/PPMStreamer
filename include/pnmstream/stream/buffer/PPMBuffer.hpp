@@ -43,7 +43,7 @@ public:
     // ppm file pixels: width * height
     size_t size() const noexcept override;
     // bytes size: pixels * sizeof(color_type)
-    size_t bytes() const override;
+    size_t bytes() const noexcept override;
     // data pointer
     const color_type* data() const noexcept override;
     // mutable data pointer
@@ -67,9 +67,9 @@ private:
 public:
 
     // (x, y) rgb value
-    color_type& operator ()(size_t x, size_t y) override;
+    color_type& operator ()(size_t x, size_t y) noexcept override;
     // (x, y) rgb value
-    const color_type& operator ()(size_t x, size_t y) const override;
+    const color_type& operator ()(size_t x, size_t y) const noexcept override;
 
     // check and visit
     color_type& at(size_t x, size_t y) override;
@@ -77,13 +77,13 @@ public:
     const color_type& at(size_t x, size_t y) const override;
 
     // the position
-    color_type& operator [](size_t n) override;
-    const color_type& operator [](size_t n) const override;
+    color_type& operator [](size_t n) noexcept override;
+    const color_type& operator [](size_t n) const noexcept override;
 
 #pragma endregion
 public:
     // clear all buffer
-    void clear() override;
+    void clear() noexcept override;
 
 };
 
