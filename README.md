@@ -150,6 +150,8 @@ make test                       # 构建并运行测试（tests/outputs/）
 
 ## 快速开始
 
+### [程序示例](./examples/)
+
 ```cpp
 #include <pnmstream/stream/PNMStream.hpp>
 #include <pnmstream/stream/PNMDrawer.hpp>
