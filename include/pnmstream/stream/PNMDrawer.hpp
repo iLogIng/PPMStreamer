@@ -122,8 +122,8 @@ void
 pnmstream::PNMDrawer<color_type>::
 fill_rectangle(PointI p, size_t w, size_t h, color_type color) noexcept
 {
-    size_t end_row = std::min(p.x + h, buffer_.height());
-    size_t end_col = std::min(p.y + w, buffer_.width());
+    size_t end_row = std::min(p.y + h, buffer_.height());
+    size_t end_col = std::min(p.x + w, buffer_.width());
 
     for(size_t row = p.y; row < end_row; ++row)
     {
