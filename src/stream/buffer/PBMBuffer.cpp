@@ -46,14 +46,14 @@ height() const noexcept
 
 std::size_t
 pnmstream::PBMBuffer::
-size() const
+size() const noexcept
 {
     return pixels_.size();
 }
 
 std::size_t
 pnmstream::PBMBuffer::
-bytes() const
+bytes() const noexcept
 {
     return this->size() * sizeof(color_type);
 }
@@ -99,7 +99,7 @@ reset(size_t width, size_t height, color_type color)
 {
     width_ = width;
     height_ = height;
-    pixels_.resize(width * height, color);
+    pixels_.assign(width * height, color);
 }
 
 void
@@ -114,14 +114,14 @@ check_bounds(size_t x, size_t y) const
 
 pnmstream::PBMBuffer::color_type&
 pnmstream::PBMBuffer::
-operator ()(size_t x, size_t y)
+operator ()(size_t x, size_t y) noexcept
 {
     return pixels_[x + y * width_];
 }
 
 const pnmstream::PBMBuffer::color_type&
 pnmstream::PBMBuffer::
-operator ()(size_t x, size_t y) const
+operator ()(size_t x, size_t y) const noexcept
 {
     return pixels_[x + y * width_];
 }
@@ -144,21 +144,21 @@ at(size_t x, size_t y) const
 
 pnmstream::PBMBuffer::color_type&
 pnmstream::PBMBuffer::
-operator [](size_t n)
+operator [](size_t n) noexcept
 {
     return pixels_[n];
 }
 
 const pnmstream::PBMBuffer::color_type&
 pnmstream::PBMBuffer::
-operator [](size_t n) const
+operator [](size_t n) const noexcept
 {
     return pixels_[n];
 }
 
 void
 pnmstream::PBMBuffer::
-clear()
+clear() noexcept
 {
     pixels_.clear();
 }
