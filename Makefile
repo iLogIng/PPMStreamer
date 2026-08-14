@@ -1,8 +1,15 @@
 MAKEFLAGS += -r
 
+# COMPILER = = = = = = =
+
 CXX      := g++
-CXXSTD   := -std=c++17
-CXXFLAGS := $(CXXSTD) -g -Wall -Wextra -Wpedantic
+CXXFLAGS := -std=c++17
+CXXFLAGS += -g -O2
+CXXFLAGS += -Wall -Wextra -Wpedantic
+CXXFLAGS += -I./include/
+CXXFLAGS += -lpthread
+# CXXFLAGS += -L.
+
 AR       := ar
 
 INC_DIR := include
@@ -22,7 +29,7 @@ DEMO_OBJS := $(OUT_DIR)/examples/demo.o
 DEMO_BIN  := $(OUT_DIR)/pnmstream_demo
 
 
-# = = = = = = = = = =
+# TOOLS = = = = = = = = = =
 
 .PHONY: all clean test lib demo
 
@@ -68,3 +75,4 @@ test:
 clean:
 	rm -rf $(OUT_DIR) $(LIB_DIR)
 	+$(MAKE) -C tests clean
+
