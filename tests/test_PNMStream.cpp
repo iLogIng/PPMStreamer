@@ -331,3 +331,35 @@ TEST_F(PNMStreamTest, PBMWriter)
     EXPECT_EQ(reader.buffer().height(), 4u);
     EXPECT_TRUE(reader.buffer()(0, 0).is_black());
 }
+
+TEST_F(PNMStreamTest, PBMPaddedRowRoundTrip)
+{
+    using namespace pnmstream;
+    const size_t w = 10, h = 3;   // 宽度非 8 的倍数，验证 P4 逐行字节对齐
+
+    auto pattern = [](size_t x, size_t y) { return (x + y) % 2 == 0; };
+
+    {
+        PNMStream<PBMBuffer> stream(temp_pbm_, w, h, 1, Binary::white());
+        for(size_t y = 0; y < h; ++y)
+        {
+            for(size_t x = 0; x < w; ++x)
+            {
+                stream.buffer()(x, y) = pattern(x, y) ? Binary::black() : Binary::white();
+            }
+        }
+    }   // close triggers save
+
+    PNMStream<PBMBuffer> reader;
+    reader.read(temp_pbm_);
+    EXPECT_EQ(reader.buffer().width(), w);
+    EXPECT_EQ(reader.buffer().height(), h);
+    for(size_t y = 0; y < h; ++y)
+    {
+        for(size_t x = 0; x < w; ++x)
+        {
+            EXPECT_EQ(reader.buffer()(x, y).is_black(), pattern(x, y))
+                << "mismatch at (x=" << x << ", y=" << y << ")";
+        }
+    }
+}

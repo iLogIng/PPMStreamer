@@ -287,7 +287,8 @@ read(const std::string& filename)
 
     if constexpr(std::is_same_v<BufferT, PBMBuffer>)
     {
-        size_t pbytes = ((w + 7) / 8) * h;
+        size_t row_bytes = (w + 7) / 8;
+        size_t pbytes = row_bytes * h;
         std::vector<uint8_t> packed(pbytes);
         file_.read(reinterpret_cast<char*>(packed.data()),
                    static_cast<std::streamsize>(pbytes));
@@ -295,12 +296,15 @@ read(const std::string& filename)
         {
             throw std::runtime_error("FAILED TO READ PIXEL DATA FROM: " + filename);
         }
-        for(size_t i = 0; i < w * h; ++i)
+        for(size_t y = 0; y < h; ++y)
         {
-            size_t byte_idx = i / 8;
-            size_t bit_idx  = 7 - (i % 8);
-            buffer_.data()[i] = color_type{static_cast<uint8_t>(
-                (packed[byte_idx] >> bit_idx) & 1)};
+            for(size_t x = 0; x < w; ++x)
+            {
+                size_t byte_idx = y * row_bytes + x / 8;
+                size_t bit_idx  = 7 - (x % 8);
+                buffer_.data()[y * w + x] = color_type{static_cast<uint8_t>(
+                    (packed[byte_idx] >> bit_idx) & 1)};
+            }
         }
     }
     else
@@ -328,13 +332,18 @@ save()
         {
             size_t w = buffer_.width();
             size_t h = buffer_.height();
-            size_t pbytes = ((w + 7) / 8) * h;
+            size_t row_bytes = (w + 7) / 8;
+            size_t pbytes = row_bytes * h;
             std::vector<uint8_t> packed(pbytes, 0);
-            for(size_t i = 0; i < w * h; ++i)
+            for(size_t y = 0; y < h; ++y)
             {
-                if(buffer_.data()[i].is_black())
+                for(size_t x = 0; x < w; ++x)
                 {
-                    packed[i / 8] |= static_cast<uint8_t>(1 << (7 - (i % 8)));
+                    if(buffer_.data()[y * w + x].is_black())
+                    {
+                        size_t byte_idx = y * row_bytes + x / 8;
+                        packed[byte_idx] |= static_cast<uint8_t>(1 << (7 - (x % 8)));
+                    }
                 }
             }
             file_.write(reinterpret_cast<const char*>(packed.data()),

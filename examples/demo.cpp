@@ -22,13 +22,24 @@ void gray_graph();
 
 void binary_map();
 
-const std::filesystem::path outputs_dir("../outputs");
-const std::filesystem::path output_frames_dir = outputs_dir / "output-frames";
-const std::filesystem::path output_video_dir = outputs_dir / "output-video";
+std::filesystem::path outputs_dir;
+std::filesystem::path output_frames_dir;
+std::filesystem::path output_video_dir;
 
-int main()
+int main(int argc, char** argv)
 {
-    chess_board();
+    namespace fs = std::filesystem;
+    (void)argc;
+
+    fs::path exe_dir = fs::absolute(argv[0]).parent_path();
+    outputs_dir = exe_dir;
+    output_frames_dir = outputs_dir / "output-frames";
+    output_video_dir = outputs_dir / "output-video";
+
+    fs::create_directories(output_frames_dir);
+    fs::create_directories(output_video_dir);
+
+    // chess_board();
     // shader_test();
     // multi_thread_shader_test();
     // pure_dark_red();
@@ -36,9 +47,8 @@ int main()
     // rhombus();
 
     // gray_graph();
-    // binary_map();
+    binary_map();
 
-    return 0;
 }
 
 void chess_board()
@@ -436,9 +446,10 @@ void gray_graph()
 void binary_map()
 {
     using namespace pnmstream;
+    namespace fs = std::filesystem;
 
-    std::string ppm_file_name = "binary_map.ppm";
-    std::filesystem::path ppm_output_path = output_frames_dir / ppm_file_name;
+    std::string ppm_file_name{"binary_map.ppm"};
+    fs::path ppm_output_path = output_frames_dir / ppm_file_name;
     const int scale = 60;
     const int w = 16;
     const int h = 9;
@@ -446,8 +457,10 @@ void binary_map()
     const int height = h * scale;
     const int colors = 255;
 
-    PNMStream<PBMBuffer> stream(ppm_output_path, width, height, colors, Binary::white());
-    PNMDrawer drawer(stream.buffer());
+    PNMStream<PBMBuffer> stream{ppm_output_path, width, height, colors, Binary::white()};
+    PNMDrawer drawer{stream.buffer()};
+
+    drawer.fill_rectangle({0, 0}, width, height, pnmstream::Binary::white());
 
     stream.close();
     std::cout << "Generate: " << ppm_output_path << std::endl;
